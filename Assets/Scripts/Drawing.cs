@@ -32,15 +32,11 @@ public class Drawing : MonoBehaviour {
                 r.SetPositions(points);
             }
         }
-        if (Input.GetButtonDown("Jump"))
-            draw();
+        
 		
 	}
 
-    public void draw()
-    {
-        
-    }
+    
 }
 
 

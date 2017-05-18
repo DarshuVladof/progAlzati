@@ -35,7 +35,7 @@ public class TurningPoint : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Track")
                 {
                     turn = ObjectPoolingManager.Instance.GetObject(dot.name);
-                    turn.transform.position = new Vector3(hit.point.x, hit.point.y, -0.01f);
+                    turn.transform.position = new Vector3(hit.point.x, hit.point.y, -0.01f) +.2f* (pointer.position - transform.position).normalized;
                     turn.SetActive(true);
                 }
 
@@ -46,13 +46,13 @@ public class TurningPoint : MonoBehaviour
 
                 if ( trackup)
                 {
-                    dirNext = Quaternion.Euler(0, 0, 30) * (pointer.position - transform.position);
-                    dirprev = Quaternion.Euler(0, 0, -30) * (pointer.position - transform.position);
+                    dirNext = Quaternion.Euler(0, 0, 35) * (pointer.position - transform.position);
+                    dirprev = Quaternion.Euler(0, 0, -35) * (pointer.position - transform.position);
                }
                 else
                 {
-                    dirNext = Quaternion.Euler(0, 0, 330) * (pointer.position - transform.position);
-                    dirprev = Quaternion.Euler(0, 0, 30) * (pointer.position - transform.position);
+                    dirNext = Quaternion.Euler(0, 0, -35) * (pointer.position - transform.position);
+                    dirprev = Quaternion.Euler(0, 0, 35) * (pointer.position - transform.position);
                 }
                 
                 RaycastHit2D hit2 = Physics2D.Raycast(transform.position, dirNext, 20);
@@ -62,7 +62,7 @@ public class TurningPoint : MonoBehaviour
                 {
                     next = ObjectPoolingManager.Instance.GetObject(dot.name);
                     next.transform.position = new Vector3(hit2.point.x, hit2.point.y, -0.01f);
-                    next.transform.position = next.transform.position + (.85f* dirNext.normalized);
+                    next.transform.position = next.transform.position + (.75f* dirNext.normalized);
                     next.SetActive(true);
                 }
 
@@ -76,7 +76,7 @@ public class TurningPoint : MonoBehaviour
                 {
                     previous = ObjectPoolingManager.Instance.GetObject(dot.name);
                     previous.transform.position = new Vector3(hit3.point.x, hit3.point.y, -0.01f);
-                    previous.transform.position = previous.transform.position + (.85f * dirprev.normalized);
+                    previous.transform.position = previous.transform.position + (.65f * dirprev.normalized);
                     previous.SetActive(true);
                 }
 
