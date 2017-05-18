@@ -35,16 +35,16 @@ public class CalculateBezierCurve
         Vector3 p2;
         Vector3 p3;
 
-        for (int i = 0; i < controlPoints.Count; i += 3)
+        for (int i = 0; i < controlPoints.Count-1; i += 3)
         {
-            if (i == controlPoints.Count - 1)
+           /* if (i == controlPoints.Count - 1)
             {
                 p0 = controlPoints[i];
-                p1 = controlPoints[0];
+                p1 = controlPoints[0];1
                 p2 = controlPoints[1];
                 p3 = controlPoints[2];
             }
-           else if (i == controlPoints.Count - 2)
+           else */if (i == controlPoints.Count - 2)
             {
                 p0 = controlPoints[i];
                 p1 = controlPoints[i + 1];
@@ -58,14 +58,14 @@ public class CalculateBezierCurve
                 p2 = controlPoints[i + 2];
                 p3 = controlPoints[0];
             }
-            else if(i % 3 == 0)
+         /*  else if(i>1 &&(i==2 ||i % 3 == 0))
             {
                  p0 = controlPoints[i];
-                 p1 = controlPoints[i + 1];
-                 p2 = controlPoints[i + 1];
+                 p1 = controlPoints[i];
+                 p2 = controlPoints[i +1];
                  p3 = controlPoints[i + 2];
                 i--;
-            }
+            }*/
             else
             {
                  p0 = controlPoints[i];
@@ -74,16 +74,29 @@ public class CalculateBezierCurve
                  p3 = controlPoints[i + 3];
             }
 
-            if(i == 0)
+           
+            if (i == controlPoints.Count - 2)
             {
-                points.Add(CalculateBezierPoint(0, p0, p1, p2, p3));
+                for (int j = 1; j <= SEGMENTS_PER_CURVE/2; j++)
+                {
+                    float t = j / (float)SEGMENTS_PER_CURVE;
+                    points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                }
             }
-
-            for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+            else
             {
-                float t = j / (float)SEGMENTS_PER_CURVE;
-                points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                if (i == 0)
+                {
+                    points.Add(CalculateBezierPoint(0, p0, p1, p2, p3));
+                }
+                    for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+                    {
+                        float t = j / (float)SEGMENTS_PER_CURVE;
+                        points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                    }
+                
             }
+          
         }
 
         return points;
