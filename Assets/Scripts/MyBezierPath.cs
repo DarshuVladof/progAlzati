@@ -8,6 +8,8 @@ public class MyBezierPath : MonoBehaviour {
     {
         Line,
         Bezier,
+        CR,
+        Quad,
     }
 
     private Mode mode;
@@ -18,6 +20,7 @@ public class MyBezierPath : MonoBehaviour {
     private GameObject r;
     public Generator gen;
     public Vector3[] p;
+    public CalculateBezierCurve calculateBezier;
 
     void Start () {
         r = GameObject.Find("Renderer");
@@ -25,9 +28,11 @@ public class MyBezierPath : MonoBehaviour {
         points = new List<Vector3>();
         mode = Mode.Bezier;
         gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
+         calculateBezier = new CalculateBezierCurve();
+
     }
-	
-	void Update () {
+
+    void Update () {
 
         ReceiveInput();
         Render();
@@ -64,10 +69,19 @@ public class MyBezierPath : MonoBehaviour {
                 mode = Mode.Bezier;
             }
 
-          /*  if (Input.GetKeyDown(KeyCode.X))
+            if (Input.GetKeyDown(KeyCode.F3))
             {
-                points.Clear();
-            }*/
+                mode = Mode.CR;
+            }
+            if (Input.GetKeyDown(KeyCode.F4))
+            {
+                mode = Mode.Quad;
+            }
+
+            /*  if (Input.GetKeyDown(KeyCode.X))
+              {
+                  points.Clear();
+              }*/
         }
     }
 
@@ -78,6 +92,10 @@ public class MyBezierPath : MonoBehaviour {
             case Mode.Line : RenderLine();
                 break;
             case Mode.Bezier : RenderBezier();
+                break;
+            case Mode.CR: RenderCR();
+                break;
+            case Mode.Quad:RenderBezierAlt();
                 break;
             default: break;
         }
@@ -91,13 +109,34 @@ public class MyBezierPath : MonoBehaviour {
 
     private void RenderBezier()
     {
-        CalculateBezierCurve calculateBezier = new CalculateBezierCurve();
-
+      
         calculateBezier.SetControlPoints(points);
         List<Vector3> drawingPoints = calculateBezier.GetDrawingPoints();
 
         //gizmos = drawingPoints;
      
+        SetLinePoints(drawingPoints);
+    }
+
+    private void RenderBezierAlt()
+    {
+
+        calculateBezier.SetControlPoints(points);
+        List<Vector3> drawingPoints = calculateBezier.GetDrawingPointsAlt();
+
+        //gizmos = drawingPoints;
+
+        SetLinePoints(drawingPoints);
+    }
+
+    private void RenderCR()
+    {
+        
+        calculateBezier.SetControlPoints(points);
+        List<Vector3> drawingPoints = calculateBezier.GetDrawingPointsCR();
+
+        //gizmos = drawingPoints;
+
         SetLinePoints(drawingPoints);
     }
 

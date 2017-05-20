@@ -13,14 +13,36 @@ public class TurningPoint : MonoBehaviour
     public GameObject Generator;
     public bool generated = false;
     public bool trackup=true;
+    public float angle;
+    private float w, wnext, wprev;
+    public bool cub;
     // Use this for initialization
     void Start()
     {
         pointer = this.transform.GetChild(0);
         gameManager = GameObject.FindGameObjectWithTag("Manager");
         Generator = GameObject.FindGameObjectWithTag("Gen");
+        if (cub)
+            cubic();
+        else
+            quadra();
     }
 
+    public void quadra()
+    {
+        angle = 35;
+        w = .4f;
+        wnext = .70f;
+        wprev = .2f;
+    }
+
+    public void cubic()
+    {
+        angle = 35;
+        w = .3f;
+        wnext = .60f;
+        wprev = .88f;
+    }
     // Update is called once per frame
     void Update()
     {
@@ -35,7 +57,7 @@ public class TurningPoint : MonoBehaviour
                 if (hit.collider.gameObject.tag == "Track")
                 {
                     turn = ObjectPoolingManager.Instance.GetObject(dot.name);
-                    turn.transform.position = new Vector3(hit.point.x, hit.point.y, -0.01f) +.4f* (pointer.position - transform.position).normalized;
+                    turn.transform.position = new Vector3(hit.point.x, hit.point.y, -0.01f) +w* (pointer.position - transform.position).normalized;
                     turn.SetActive(true);
                 }
 
@@ -46,13 +68,13 @@ public class TurningPoint : MonoBehaviour
 
                 if ( trackup)
                 {
-                    dirNext = Quaternion.Euler(0, 0, 35) * (pointer.position - transform.position);
-                    dirprev = Quaternion.Euler(0, 0, -35) * (pointer.position - transform.position);
+                    dirNext = Quaternion.Euler(0, 0, angle) * (pointer.position - transform.position);
+                    dirprev = Quaternion.Euler(0, 0, -angle) * (pointer.position - transform.position);
                }
                 else
                 {
-                    dirNext = Quaternion.Euler(0, 0, -35) * (pointer.position - transform.position);
-                    dirprev = Quaternion.Euler(0, 0, 35) * (pointer.position - transform.position);
+                    dirNext = Quaternion.Euler(0, 0, -angle) * (pointer.position - transform.position);
+                    dirprev = Quaternion.Euler(0, 0, angle) * (pointer.position - transform.position);
                 }
                 
                 RaycastHit2D hit2 = Physics2D.Raycast(transform.position, dirNext, 20);
@@ -62,7 +84,7 @@ public class TurningPoint : MonoBehaviour
                 {
                     next = ObjectPoolingManager.Instance.GetObject(dot.name);
                     next.transform.position = new Vector3(hit2.point.x, hit2.point.y, -0.01f);
-                    next.transform.position = next.transform.position + (.66f* dirNext.normalized);
+                    next.transform.position = next.transform.position + (wnext* dirNext.normalized);
                     next.SetActive(true);
                 }
 
@@ -76,7 +98,7 @@ public class TurningPoint : MonoBehaviour
                 {
                     previous = ObjectPoolingManager.Instance.GetObject(dot.name);
                     previous.transform.position = new Vector3(hit3.point.x, hit3.point.y, -0.01f);
-                    previous.transform.position = previous.transform.position + (.3f * dirprev.normalized);
+                    previous.transform.position = previous.transform.position + (wprev * dirprev.normalized);
                     previous.SetActive(true);
                 }
 
