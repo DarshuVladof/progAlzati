@@ -31,9 +31,13 @@ public class Generator : MonoBehaviour {
                         if (turns[i].GetComponent<TurningPoint>().id == index)
                         {
                             index++;
+                            if((turns[i].GetComponent<TurningPoint>().wide))
+                                dots.Add(turns[i].GetComponent<TurningPoint>().widePrevious);
                             dots.Add(turns[i].GetComponent<TurningPoint>().previous);
                             dots.Add(turns[i].GetComponent<TurningPoint>().turn);
                             dots.Add(turns[i].GetComponent<TurningPoint>().next);
+                            if ((turns[i].GetComponent<TurningPoint>().wide))
+                                dots.Add(turns[i].GetComponent<TurningPoint>().wideNext);
 
                         }
                     }
