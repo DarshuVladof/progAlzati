@@ -5,6 +5,7 @@ using UnityEngine;
 public class Generator : MonoBehaviour {
     public List<GameObject> dots;
     public GameObject[] turns;
+    public List<GameObject> orderedTurns;
     public GameObject start,end;
     public int dot_num = 0;
     public int confirms = 0;
@@ -15,6 +16,7 @@ public class Generator : MonoBehaviour {
         turns = GameObject.FindGameObjectsWithTag("Tp");
         start = GameObject.FindGameObjectWithTag("Start");
         end = GameObject.FindGameObjectWithTag("End");
+        orderedTurns=new List<GameObject>();
     }
 	
 	// Update is called once per frame
@@ -30,6 +32,7 @@ public class Generator : MonoBehaviour {
                     {
                         if (turns[i].GetComponent<TurningPoint>().id == index)
                         {
+                            orderedTurns.Add(turns[i]);
                             index++;
                             if((turns[i].GetComponent<TurningPoint>().wide))
                                 dots.Add(turns[i].GetComponent<TurningPoint>().widePrevious);

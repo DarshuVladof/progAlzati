@@ -16,10 +16,9 @@ public class MyBezierPath : MonoBehaviour {
     public List<Vector3> points;
     //private List<Vector2> gizmos;
     private LineRenderer lineRenderer;
-    public GameObject point;
     private GameObject r;
     public Generator gen;
-    public Vector3[] p;
+    private Vector3[] p;
     public CalculateBezierCurve calculateBezier;
 
     void Start () {
@@ -28,8 +27,7 @@ public class MyBezierPath : MonoBehaviour {
         points = new List<Vector3>();
         mode = Mode.Bezier;
         gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
-         calculateBezier = new CalculateBezierCurve();
-
+        calculateBezier = new CalculateBezierCurve();
     }
 
     void Update () {
@@ -50,6 +48,13 @@ public class MyBezierPath : MonoBehaviour {
                 //points.Add(worldPosition);
                 int i = 0;
                 p = new Vector3[gen.dots.Count];
+
+                GameObject[] dots = GameObject.FindGameObjectsWithTag("Dot");
+                Debug.Log(dots.Length);
+                for (int j = 0; j < dots.Length; i++)
+                {
+                    dots[j].SetActive(true);
+                }
 
                 foreach (GameObject g in gen.dots)
                 {
