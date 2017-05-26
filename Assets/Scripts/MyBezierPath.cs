@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MyBezierPath : MonoBehaviour {
-
+public class MyBezierPath : MonoBehaviour
+{
     private enum Mode
     {
         Line,
@@ -12,26 +12,29 @@ public class MyBezierPath : MonoBehaviour {
         Quad,
     }
 
-    private Mode mode;
     public List<Vector3> points;
-    //private List<Vector2> gizmos;
+
+    private Generator gen;
+    private Mode mode;
+    private CalculateBezierCurve calculateBezier;
     private LineRenderer lineRenderer;
     private GameObject r;
-    public Generator gen;
     private Vector3[] p;
-    public CalculateBezierCurve calculateBezier;
+    private List<Vector3> drawingPoints;
 
-    void Start () {
+    void Start()
+    {
         r = GameObject.Find("Renderer");
+        gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
         lineRenderer = GetComponent<LineRenderer>();
         points = new List<Vector3>();
         mode = Mode.Bezier;
-        gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
         calculateBezier = new CalculateBezierCurve();
+        drawingPoints = new List<Vector3>();
     }
 
-    void Update () {
-
+    void Update()
+    {
         ReceiveInput();
         Render();
     }
@@ -40,7 +43,6 @@ public class MyBezierPath : MonoBehaviour {
     {
         if (gen.done)
         {
-
             if (Input.GetMouseButtonDown(0))
             {
                 //Vector2 position = Input.mousePosition;
@@ -50,17 +52,22 @@ public class MyBezierPath : MonoBehaviour {
                 p = new Vector3[gen.dots.Count];
 
                 GameObject[] dots = GameObject.FindGameObjectsWithTag("Dot");
-                Debug.Log(dots.Length);
+                //Debug.Log(dots.Length);
                 for (int j = 0; j < dots.Length; i++)
                 {
                     dots[j].SetActive(true);
                 }
 
-                foreach (GameObject g in gen.dots)
+                for (i = 0; i < gen.dots.Count; i++)
                 {
-                    p[i] = g.transform.position;
-                    i++;
+                    p[i] = gen.dots[i].transform.position;
                 }
+
+                //foreach (GameObject g in gen.dots)
+                //{
+                //    p[i] = g.transform.position;
+                //    i++;
+                //}
                 points.AddRange(p);
             }
 
@@ -90,17 +97,21 @@ public class MyBezierPath : MonoBehaviour {
         }
     }
 
-    private void Render ()
+    private void Render()
     {
         switch (mode)
         {
-            case Mode.Line : RenderLine();
+            case Mode.Line:
+                RenderLine();
                 break;
-            case Mode.Bezier : RenderBezier();
+            case Mode.Bezier:
+                RenderBezier();
                 break;
-            case Mode.CR: RenderCR();
+            case Mode.CR:
+                RenderCR();
                 break;
-            case Mode.Quad:RenderBezierAlt();
+            case Mode.Quad:
+                RenderBezierAlt();
                 break;
             default: break;
         }
@@ -108,58 +119,34 @@ public class MyBezierPath : MonoBehaviour {
 
     private void RenderLine()
     {
-        //gizmos = points;
         SetLinePoints(points);
     }
 
     private void RenderBezier()
     {
-      
         calculateBezier.SetControlPoints(points);
-        List<Vector3> drawingPoints = calculateBezier.GetDrawingPoints();
-
-        //gizmos = drawingPoints;
-     
+        drawingPoints = calculateBezier.GetDrawingPoints();
         SetLinePoints(drawingPoints);
     }
 
     private void RenderBezierAlt()
     {
-
         calculateBezier.SetControlPoints(points);
-        List<Vector3> drawingPoints = calculateBezier.GetDrawingPointsAlt();
-
-        //gizmos = drawingPoints;
-
+        drawingPoints = calculateBezier.GetDrawingPointsAlt();
         SetLinePoints(drawingPoints);
     }
 
     private void RenderCR()
     {
-        
         calculateBezier.SetControlPoints(points);
-        List<Vector3> drawingPoints = calculateBezier.GetDrawingPointsCR();
-
-        //gizmos = drawingPoints;
-
+        drawingPoints = calculateBezier.GetDrawingPointsCR();
         SetLinePoints(drawingPoints);
     }
 
     private void SetLinePoints(List<Vector3> drawingPoints)
     {
         lineRenderer.positionCount = drawingPoints.Count;
-
-        //for (int i = 0; i < drawingPoints.Count; i++)
-        //{
-        //   lineRenderer.SetPosition(i, drawingPoints[i]);
-        //}
-       
         lineRenderer.SetPositions(drawingPoints.ToArray());
-    }
-
-    public void OnDrawGizmos ()
-    {
-
     }
 
     public void OnGUI()

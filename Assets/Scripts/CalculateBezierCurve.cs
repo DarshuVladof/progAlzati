@@ -4,7 +4,7 @@ using System;
 
 public class CalculateBezierCurve
 {
-    private const int SEGMENTS_PER_CURVE = 100;
+    private const int SEGMENTS_PER_CURVE = 90;
     public Generator gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
 
     private List<Vector3> controlPoints;
