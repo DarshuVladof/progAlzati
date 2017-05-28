@@ -9,7 +9,7 @@ public class CalculateBezierCurve
 
     private List<Vector3> controlPoints;
     private int curveCount; //numero di curve di bezier di grado 4
-    private Vector3 p0, p1, p2, p3, p4;
+    private Vector3 p0, p1, p2, p3, p4, p5;
     private List<Vector3> points;
 
     public CalculateBezierCurve()
@@ -133,6 +133,61 @@ public class CalculateBezierCurve
         return points;
     }
 
+    public List<Vector3> GetDrawingPointsAlt2()
+    {
+        int i = 0, k = 0;
+
+        while (i <= controlPoints.Count - 1)
+        {
+            if (i > 0 && i < controlPoints.Count - 1)
+            {
+                if (gen.orderedTurns[k].GetComponent<TurningPoint>().wide)
+                {
+                    p0 = controlPoints[i - 1];
+                    p1 = controlPoints[i];
+                    p2 = controlPoints[i + 1];
+                    p3 = controlPoints[i + 2];
+                    p4 = controlPoints[i + 3];
+                    p5 = controlPoints[i + 4];
+                    for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+                    {
+                        float t = j / (float)SEGMENTS_PER_CURVE;
+                        points.Add(CalculateBezierPoint5(t, p0, p1, p2, p3, p4, p5));
+                    }
+                    i += 5;
+                }
+                else
+                {
+                    p0 = controlPoints[i - 1];
+                    p1 = controlPoints[i];
+                    p2 = controlPoints[i + 1];
+                    p3 = controlPoints[i + 2];
+                    for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+                    {
+                        float t = j / (float)SEGMENTS_PER_CURVE;
+                        points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                    }
+                    i += 3;
+                }
+                k++;
+            }
+            else
+            {
+                if (i == 0)
+                {
+                    points.Add(controlPoints[i]);
+                    i++;
+                }
+                else if (i == controlPoints.Count - 1)
+                {
+                    points.Add(controlPoints[i]);
+                    i++;
+                }
+            }
+        }
+        return points;
+    }
+
     public Vector2 CalculateBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
     {
         t = Mathf.Clamp01(t);
@@ -163,6 +218,19 @@ public class CalculateBezierCurve
             (6 * t * t * oneMinusT * oneMinusT * p2) +
             (4 * t * t * t * oneMinusT * p3) +
             (t * t * t * t * p4);
+    }
+
+    public Vector2 CalculateBezierPoint5(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 p5)
+    {
+        t = Mathf.Clamp01(t);
+        float oneMinusT = 1f - t;
+        return
+            (oneMinusT * oneMinusT * oneMinusT * oneMinusT * oneMinusT * p0) +
+            (5 * oneMinusT * oneMinusT * oneMinusT * oneMinusT * t * p1) +
+            (10 * t * t * oneMinusT * oneMinusT * oneMinusT * p2) +
+            (10 * t * t * t * oneMinusT * oneMinusT * p3) +
+            (5 * t * t * t * t * oneMinusT * p4) +
+            (t * t * t * t * t * p5);
     }
 
     public List<Vector3> GetDrawingPointsCR()

@@ -51,23 +51,11 @@ public class MyBezierPath : MonoBehaviour
                 int i = 0;
                 p = new Vector3[gen.dots.Count];
 
-                GameObject[] dots = GameObject.FindGameObjectsWithTag("Dot");
-                //Debug.Log(dots.Length);
-                for (int j = 0; j < dots.Length; i++)
-                {
-                    dots[j].SetActive(true);
-                }
-
                 for (i = 0; i < gen.dots.Count; i++)
                 {
                     p[i] = gen.dots[i].transform.position;
                 }
 
-                //foreach (GameObject g in gen.dots)
-                //{
-                //    p[i] = g.transform.position;
-                //    i++;
-                //}
                 points.AddRange(p);
             }
 
@@ -139,7 +127,8 @@ public class MyBezierPath : MonoBehaviour
     private void RenderCR()
     {
         calculateBezier.SetControlPoints(points);
-        drawingPoints = calculateBezier.GetDrawingPointsCR();
+        //drawingPoints = calculateBezier.GetDrawingPointsCR();
+        drawingPoints = calculateBezier.GetDrawingPointsAlt2();
         SetLinePoints(drawingPoints);
     }
 
