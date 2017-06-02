@@ -55,7 +55,7 @@ public class MyBezierPath : MonoBehaviour
                 {
                     p[i] = gen.dots[i].transform.position;
                 }
-
+                points.Clear();
                 points.AddRange(p);
             }
 
