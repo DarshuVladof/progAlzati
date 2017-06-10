@@ -13,6 +13,7 @@ public class MyBezierPath : MonoBehaviour
     }
 
     public List<Vector3> points;
+    public GameObject car;
 
     private Generator gen;
     private Mode mode;
@@ -21,6 +22,8 @@ public class MyBezierPath : MonoBehaviour
     private GameObject r;
     private Vector3[] p;
     private List<Vector3> drawingPoints;
+    private int index = 0;
+    public float carSpeed = 1.0f;
 
     void Start()
     {
@@ -31,6 +34,7 @@ public class MyBezierPath : MonoBehaviour
         mode = Mode.Bezier;
         calculateBezier = new CalculateBezierCurve();
         drawingPoints = new List<Vector3>();
+        StartCoroutine(CarGo());
     }
 
     void Update()
@@ -128,6 +132,7 @@ public class MyBezierPath : MonoBehaviour
     {
         calculateBezier.SetControlPoints(points);
         //drawingPoints = calculateBezier.GetDrawingPointsCR();
+
         drawingPoints = calculateBezier.GetDrawingPointsAlt2();
         SetLinePoints(drawingPoints);
     }
@@ -145,5 +150,21 @@ public class MyBezierPath : MonoBehaviour
         GUILayout.Label("F2 Bezier curve (Click to add points)");
         GUILayout.Label("X  Clear");
         GUILayout.EndArea();
+    }
+
+    IEnumerator CarGo()
+    {
+        while (true)
+        {
+            if (drawingPoints.Count != 0)
+            {
+                car.transform.position = drawingPoints[index];
+                index++;
+                if (index >= points.Count)
+                    index = 0;
+            }
+            yield return new WaitForSeconds(1 / carSpeed);
+
+        }
     }
 }
