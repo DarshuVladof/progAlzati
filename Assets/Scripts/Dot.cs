@@ -38,10 +38,10 @@ public class Dot : MonoBehaviour
                 {
                     this.gameObject.SetActive(false);
                 }//nope.gameObject.GetComponent<BoxCollider2D>().bounds.Contains(transform.position)
-                if (this.gameObject.GetComponent<CircleCollider2D>().IsTouching(nope.gameObject.GetComponent<BoxCollider2D>()))
+                /*if (this.gameObject.GetComponent<CircleCollider2D>().IsTouching(nope.gameObject.GetComponent<BoxCollider2D>()))
                 {
                     this.gameObject.SetActive(false);
-                }
+                }*/
             }
         }
     }
