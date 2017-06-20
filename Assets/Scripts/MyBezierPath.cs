@@ -14,6 +14,7 @@ public class MyBezierPath : MonoBehaviour
 
     public List<Vector3> points;
     public GameObject car;
+    public Transform finish;
 
     private Generator gen;
     private Mode mode;
@@ -34,7 +35,8 @@ public class MyBezierPath : MonoBehaviour
         mode = Mode.Bezier;
         calculateBezier = new CalculateBezierCurve();
         drawingPoints = new List<Vector3>();
-        StartCoroutine(CarGo());
+        if(car != null && finish != null)
+            StartCoroutine(CarGo());
     }
 
     void Update()
@@ -160,8 +162,9 @@ public class MyBezierPath : MonoBehaviour
             {
                 car.transform.position = drawingPoints[index];
                 index++;
-                if (index >= points.Count)
-                    index = 0;
+                if (car.transform.position.Equals(finish.position))
+                    break;
+                //    index = 0;
             }
             yield return new WaitForSeconds(1 / carSpeed);
 
