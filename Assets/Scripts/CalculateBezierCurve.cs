@@ -61,19 +61,19 @@ public class CalculateBezierCurve
                 for (int j = 1; j <= SEGMENTS_PER_CURVE / 2; j++)
                 {
                     float t = j / (float)SEGMENTS_PER_CURVE;
-                    points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                    points.Add(CalculateBezierPoint3(t, p0, p1, p2, p3));
                 }
             }
             else
             {
                 if (i == 0)
                 {
-                    points.Add(CalculateBezierPoint(0, p0, p1, p2, p3));
+                    points.Add(CalculateBezierPoint3(0, p0, p1, p2, p3));
                 }
                 for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
                 {
                     float t = j / (float)SEGMENTS_PER_CURVE;
-                    points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                    points.Add(CalculateBezierPoint3(t, p0, p1, p2, p3));
                 }
             }
         }
@@ -133,7 +133,7 @@ public class CalculateBezierCurve
         return points;
     }
 
-    public List<Vector3> GetDrawingPointsAlt2()
+    public List<Vector3> GetDrawingPoints3or5Degree()
     {
         int i = 0, k = 0;
 
@@ -165,7 +165,7 @@ public class CalculateBezierCurve
                     for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
                     {
                         float t = j / (float)SEGMENTS_PER_CURVE;
-                        points.Add(CalculateBezierPoint(t, p0, p1, p2, p3));
+                        points.Add(CalculateBezierPoint3(t, p0, p1, p2, p3));
                     }
                     i += 3;
                 }
@@ -188,7 +188,16 @@ public class CalculateBezierCurve
         return points;
     }
 
-    public Vector2 CalculateBezierPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    public Vector2 CalculateBezierPoint2(float t, Vector3 p0, Vector3 p1, Vector3 p2)
+    {
+        t = Mathf.Clamp01(t);
+        float oneMinusT = 1f - t;
+        return
+            oneMinusT * (oneMinusT * p0 + t * p1) +
+            t * (oneMinusT * p1 + t * p2);
+    }
+
+    public Vector2 CalculateBezierPoint3(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
     {
         t = Mathf.Clamp01(t);
         float oneMinusT = 1f - t;
@@ -197,15 +206,6 @@ public class CalculateBezierCurve
             3f * oneMinusT * oneMinusT * t * p1 +
             3f * oneMinusT * t * t * p2 +
             t * t * t * p3;
-    }
-
-    public Vector2 CalculateBezierPoint2(float t, Vector3 p0, Vector3 p1, Vector3 p2)
-    {
-        t = Mathf.Clamp01(t);
-        float oneMinusT = 1f - t;
-        return
-            oneMinusT * (oneMinusT * p0 + t * p1) +
-            t * (oneMinusT * p1 + t * p2);
     }
 
     public Vector2 CalculateBezierPoint4(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4)
@@ -233,61 +233,61 @@ public class CalculateBezierCurve
             (t * t * t * t * t * p5);
     }
 
-    public List<Vector3> GetDrawingPointsCR()
-    {
-        int i = 0;
+    //public List<Vector3> GetDrawingPointsCR()
+    //{
+    //    int i = 0;
 
-        while (i < controlPoints.Count)
-        {
-            if (i == controlPoints.Count - 2)
-            {
-                p0 = controlPoints[i - 1];
-                p1 = controlPoints[i];
-                p2 = controlPoints[i + 1];
-                p3 = controlPoints[0];
-                i += 3;
-            }
-            else if (i == 0)
-            {
-                p0 = controlPoints[controlPoints.Count - 1];
-                p1 = controlPoints[i];
-                p2 = controlPoints[i + 1];
-                p3 = controlPoints[i + 2];
+    //    while (i < controlPoints.Count)
+    //    {
+    //        if (i == controlPoints.Count - 2)
+    //        {
+    //            p0 = controlPoints[i - 1];
+    //            p1 = controlPoints[i];
+    //            p2 = controlPoints[i + 1];
+    //            p3 = controlPoints[0];
+    //            i += 3;
+    //        }
+    //        else if (i == 0)
+    //        {
+    //            p0 = controlPoints[controlPoints.Count - 1];
+    //            p1 = controlPoints[i];
+    //            p2 = controlPoints[i + 1];
+    //            p3 = controlPoints[i + 2];
 
-                i += 2;
-            }
-            else if (i == controlPoints.Count - 1)
-            {
-                p0 = controlPoints[i - 1];
-                p1 = controlPoints[i];
-                p2 = controlPoints[0];
-                p3 = controlPoints[1];
-                i += 3;
-            }
-            else
-            {
-                p0 = controlPoints[i - 1];
-                p1 = controlPoints[i];
-                p2 = controlPoints[i + 1];
-                p3 = controlPoints[i + 2];
-                i += 3;
-            }
-            for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
-            {
-                float t = j / (float)SEGMENTS_PER_CURVE;
-                points.Add(CalculateCRomPoint(t, p0, p1, p2, p3));
-            }
-        }
-        return points;
-    }
+    //            i += 2;
+    //        }
+    //        else if (i == controlPoints.Count - 1)
+    //        {
+    //            p0 = controlPoints[i - 1];
+    //            p1 = controlPoints[i];
+    //            p2 = controlPoints[0];
+    //            p3 = controlPoints[1];
+    //            i += 3;
+    //        }
+    //        else
+    //        {
+    //            p0 = controlPoints[i - 1];
+    //            p1 = controlPoints[i];
+    //            p2 = controlPoints[i + 1];
+    //            p3 = controlPoints[i + 2];
+    //            i += 3;
+    //        }
+    //        for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+    //        {
+    //            float t = j / (float)SEGMENTS_PER_CURVE;
+    //            points.Add(CalculateCRomPoint(t, p0, p1, p2, p3));
+    //        }
+    //    }
+    //    return points;
+    //}
 
-    public Vector2 CalculateCRomPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
-    {
-        t = Mathf.Clamp01(t);
-        return
-           (2f * p1 +
-           (p2 - p0) * t +
-            (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
-            (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t) * 0.5f;
-    }
+    //public Vector2 CalculateCRomPoint(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3)
+    //{
+    //    t = Mathf.Clamp01(t);
+    //    return
+    //       (2f * p1 +
+    //       (p2 - p0) * t +
+    //        (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
+    //        (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t) * 0.5f;
+    //}
 }

@@ -8,7 +8,7 @@ public class MyBezierPath : MonoBehaviour
     {
         Line,
         Bezier,
-        CR,
+        BezierVariousDegree,
         Quad,
     }
 
@@ -24,7 +24,7 @@ public class MyBezierPath : MonoBehaviour
     private Vector3[] p;
     private List<Vector3> drawingPoints;
     private int index = 0;
-    public float carSpeed = 1.0f;
+    public float carSpeed = 50.0f;
 
     void Start()
     {
@@ -32,17 +32,41 @@ public class MyBezierPath : MonoBehaviour
         gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
         lineRenderer = GetComponent<LineRenderer>();
         points = new List<Vector3>();
-        mode = Mode.Bezier;
+        mode = Mode.BezierVariousDegree;
         calculateBezier = new CalculateBezierCurve();
         drawingPoints = new List<Vector3>();
-        if(car != null && finish != null)
-            StartCoroutine(CarGo());
+        //if(car != null && finish != null)
+        //    StartCoroutine(CarGo());
     }
 
     void Update()
     {
-        ReceiveInput();
-        Render();
+        //ReceiveInput();
+        //Render();
+    }
+
+    public void GenerateSpline()
+    {
+        if (gen.done)
+        {
+            int i = 0;
+            p = new Vector3[gen.dots.Count];
+
+            for (i = 0; i < gen.dots.Count; i++)
+            {
+                p[i] = gen.dots[i].transform.position;
+            }
+            points.Clear();
+            points.AddRange(p);
+
+            RenderBezier3or5Degree();
+        }
+    }
+
+    public void StartCar()
+    {
+        if(car != null && finish != null)
+            StartCoroutine(CarGo());
     }
 
     private void ReceiveInput()
@@ -77,7 +101,7 @@ public class MyBezierPath : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.F3))
             {
-                mode = Mode.CR;
+                mode = Mode.BezierVariousDegree;
             }
             if (Input.GetKeyDown(KeyCode.F4))
             {
@@ -101,8 +125,8 @@ public class MyBezierPath : MonoBehaviour
             case Mode.Bezier:
                 RenderBezier();
                 break;
-            case Mode.CR:
-                RenderCR();
+            case Mode.BezierVariousDegree:
+                RenderBezier3or5Degree();
                 break;
             case Mode.Quad:
                 RenderBezierAlt();
@@ -130,12 +154,12 @@ public class MyBezierPath : MonoBehaviour
         SetLinePoints(drawingPoints);
     }
 
-    private void RenderCR()
+    private void RenderBezier3or5Degree()
     {
         calculateBezier.SetControlPoints(points);
         //drawingPoints = calculateBezier.GetDrawingPointsCR();
 
-        drawingPoints = calculateBezier.GetDrawingPointsAlt2();
+        drawingPoints = calculateBezier.GetDrawingPoints3or5Degree();
         SetLinePoints(drawingPoints);
     }
 
