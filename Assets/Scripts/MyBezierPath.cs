@@ -24,6 +24,7 @@ public class MyBezierPath : MonoBehaviour
     private Vector3[] p;
     private List<Vector3> drawingPoints;
     private int index = 0;
+
     public float carSpeed = 50.0f;
 
     void Start()
@@ -65,8 +66,11 @@ public class MyBezierPath : MonoBehaviour
 
     public void StartCar()
     {
-        if(car != null && finish != null)
+        if (car != null && finish != null)
+        {
+            //car.SetActive(true);
             StartCoroutine(CarGo());
+        }
     }
 
     private void ReceiveInput()
@@ -75,9 +79,6 @@ public class MyBezierPath : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0))
             {
-                //Vector2 position = Input.mousePosition;
-                //Vector2 worldPosition = Camera.main.ScreenToWorldPoint(position);
-                //points.Add(worldPosition);
                 int i = 0;
                 p = new Vector3[gen.dots.Count];
 

@@ -188,6 +188,47 @@ public class CalculateBezierCurve
         return points;
     }
 
+    public List<Vector3> GetPlayerDrawingPoints()
+    {
+        int i = 1;
+
+        while (i < controlPoints.Count)
+        {
+            if (i > 0 && i < controlPoints.Count - 1)
+            {
+                p0 = controlPoints[i - 1];
+                p1 = controlPoints[i];
+                p2 = controlPoints[i + 1];
+                p3 = controlPoints[i + 2];
+                p4 = controlPoints[i + 3];
+                p5 = controlPoints[i + 4];
+
+                for (int j = 1; j <= SEGMENTS_PER_CURVE; j++)
+                {
+                    float t = j / (float)SEGMENTS_PER_CURVE;
+                    points.Add(CalculateBezierPoint5(t, p0, p1, p2, p3, p4, p5));
+                }
+                i += 5;
+            }
+            else
+            {
+                if (i == 0)
+                {
+                    Debug.Log("Aggiunto primo");
+                    points.Add(controlPoints[i]);
+                    i++;
+                }
+                else if (i == controlPoints.Count - 1)
+                {
+                    points.Add(controlPoints[i]);
+                    i++;
+                }
+            }
+        }
+        Debug.Log(points.Count);
+        return points;
+    }
+
     public Vector2 CalculateBezierPoint2(float t, Vector3 p0, Vector3 p1, Vector3 p2)
     {
         t = Mathf.Clamp01(t);

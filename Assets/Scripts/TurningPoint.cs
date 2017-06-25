@@ -5,7 +5,6 @@ using UnityEngine;
 
 public class TurningPoint : MonoBehaviour
 {
-
     Transform pointer;
     public int id;
     public GameObject dot, turn, previous, next, widePrevious, wideNext;
