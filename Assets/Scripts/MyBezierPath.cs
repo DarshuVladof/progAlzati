@@ -194,5 +194,8 @@ public class MyBezierPath : MonoBehaviour
             yield return new WaitForSeconds(1 / carSpeed);
 
         }
+        index = 0;
+        yield return new WaitForSeconds(1.0f);
+        car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
     }
 }

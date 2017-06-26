@@ -188,7 +188,7 @@ public class CalculateBezierCurve
         return points;
     }
 
-    public List<Vector3> GetPlayerDrawingPoints()
+    public Vector3[] GetPlayerDrawingPoints()
     {
         int i = 1;
 
@@ -214,7 +214,6 @@ public class CalculateBezierCurve
             {
                 if (i == 0)
                 {
-                    Debug.Log("Aggiunto primo");
                     points.Add(controlPoints[i]);
                     i++;
                 }
@@ -225,8 +224,7 @@ public class CalculateBezierCurve
                 }
             }
         }
-        Debug.Log(points.Count);
-        return points;
+        return points.ToArray();
     }
 
     public Vector2 CalculateBezierPoint2(float t, Vector3 p0, Vector3 p1, Vector3 p2)

@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class InGameGui : MonoBehaviour
 {
     public Button drawButton, startButton;
-    public GameObject tre, cinque;
 
     private List<GameObject> controlPoints;
     private MyBezierPath bezierPath;
@@ -26,19 +25,15 @@ public class InGameGui : MonoBehaviour
     public void DrawSpline()
     {
         if (bezierPath != null)
+        {
             bezierPath.GenerateSpline();
-        startButton.enabled = true;
+            startButton.enabled = true;
+        }
     }
 
     public void CarGo()
     {
         if (bezierPath != null)
             bezierPath.StartCar();
-    }
-
-    public void OnClickButton(int n)
-    {
-        tre.SetActive(true);
-        cinque.SetActive(true);
     }
 }
