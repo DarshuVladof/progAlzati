@@ -37,5 +37,6 @@ public class MovePoint : MonoBehaviour
     public bool IsPicked
     {
         get { return isPicked; }
+        set { isPicked = value; }
     }
 }

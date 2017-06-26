@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBezierPath : MonoBehaviour {
-
+public class PlayerBezierPath : MonoBehaviour
+{
     public List<GameObject> gamePoints;
     public GameObject controlPoint;
 
     private RaycastHit2D hit;
+    private RaycastHit2D[] hits;
     private CalculateBezierCurve playerCalculatebezier;
     private LineRenderer lineRenderer;
     private List<Vector3> playersControlPoints;
@@ -16,12 +17,12 @@ public class PlayerBezierPath : MonoBehaviour {
     private int n;
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         gamePoints = new List<GameObject>();
         playerCalculatebezier = new CalculateBezierCurve();
         lineRenderer = GetComponent<LineRenderer>();
         playersControlPoints = new List<Vector3>();
-        //drawingPoints = new List<Vector3>();
         n = 0;
         //gamePoints.Add(GameObject.FindGameObjectWithTag("Start").transform.position);
     }
@@ -29,17 +30,28 @@ public class PlayerBezierPath : MonoBehaviour {
     // Update is called once per frame
     void Update()
     {
-        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);       
+        hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+        hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
         if (Input.GetMouseButtonDown(1))
         {
-            if (hit.collider != null && hit.collider.gameObject.name.StartsWith("Control"))
+            bool raycastOnControlPoint = false;
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.gameObject.name.StartsWith("Control"))
+                {
+                    hit = hits[i];
+                    raycastOnControlPoint = true;
+                }
+            }
+
+            if (/*hit.collider != null && hit.collider.gameObject.name.StartsWith("Control")*/raycastOnControlPoint)
             {
                 Destroy(hit.collider.gameObject);
-                //playersControlPoints.Remove(hit.collider.gameObject.transform.position);
                 gamePoints.Remove(hit.collider.gameObject);
                 n--;
-                for(int i = 0; i < gamePoints.Count; i++)
+                for (int i = 0; i < gamePoints.Count; i++)
                 {
                     gamePoints[i].GetComponentInChildren<TextMesh>().text = (i + 1).ToString();
                 }
@@ -48,22 +60,36 @@ public class PlayerBezierPath : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0))
         {
-            if (hit.collider == null || (hit.collider != null && !hit.collider.gameObject.name.StartsWith("Control")))
+            bool raycastOnControlPoint = false;
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                if (hits[i].collider.gameObject.name.StartsWith("Control"))
+                {
+                    hit = hits[i];
+                    raycastOnControlPoint = true;
+                }
+            }
+
+            if (/*hit.collider == null || !hit.collider.gameObject.name.StartsWith("Control")*/!raycastOnControlPoint)
             {
                 if (controlPoint != null)
                 {
-                    Vector2 position = Input.mousePosition;
-                    Vector2 worldPosition = Camera.main.ScreenToWorldPoint(position);
+                    Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     GameObject g = Instantiate(controlPoint, worldPosition, Quaternion.identity);
-                    //playersControlPoints.Add(g.transform.position);
                     n++;
                     g.GetComponentInChildren<TextMesh>().text = n.ToString();
                     gamePoints.Add(g);
                 }
             }
+            else
+            {
+                //lo forzo perché a volte la funzione OnMouseDown di MovePoint da problemi
+                gamePoints[gamePoints.IndexOf(hit.collider.gameObject)].GetComponent<MovePoint>().IsPicked = true;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        //if (Input.GetKeyDown(KeyCode.Space))
         {
             if ((gamePoints.Count - 1) % 5 == 0)
             {
