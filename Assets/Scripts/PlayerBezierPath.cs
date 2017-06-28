@@ -43,13 +43,15 @@ public class PlayerBezierPath : MonoBehaviour
                 {
                     hit = hits[i];
                     raycastOnControlPoint = true;
+                    break;
                 }
             }
 
-            if (/*hit.collider != null && hit.collider.gameObject.name.StartsWith("Control")*/raycastOnControlPoint)
+            if (raycastOnControlPoint)
             {
-                Destroy(hit.collider.gameObject);
+                //Destroy(hit.collider.gameObject);
                 gamePoints.Remove(hit.collider.gameObject);
+                hit.collider.gameObject.SetActive(false);
                 n--;
                 for (int i = 0; i < gamePoints.Count; i++)
                 {
@@ -68,15 +70,18 @@ public class PlayerBezierPath : MonoBehaviour
                 {
                     hit = hits[i];
                     raycastOnControlPoint = true;
+                    break;
                 }
             }
 
-            if (/*hit.collider == null || !hit.collider.gameObject.name.StartsWith("Control")*/!raycastOnControlPoint)
+            if (!raycastOnControlPoint)
             {
                 if (controlPoint != null)
                 {
                     Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    GameObject g = Instantiate(controlPoint, worldPosition, Quaternion.identity);
+                    //GameObject g = Instantiate(controlPoint, worldPosition, Quaternion.identity);
+                    GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
+                    g.transform.position = worldPosition;
                     n++;
                     g.GetComponentInChildren<TextMesh>().text = n.ToString();
                     gamePoints.Add(g);
