@@ -22,11 +22,12 @@ public class MyBezierPath : MonoBehaviour
     private LineRenderer lineRenderer;
     private GameObject r;
     private Vector3[] p;
-    private List<Vector3> drawingPoints;
+    private List<Vector3> drawingPoints, linePoints;
     private int index = 0;
-
-    public float carSpeed = 50.0f;
-
+    private double soglia;
+    public bool carmove = false;
+    public float carSpeed = 10.0f;
+    private int count = 0;
     void Start()
     {
         r = GameObject.Find("Renderer");
@@ -36,6 +37,7 @@ public class MyBezierPath : MonoBehaviour
         mode = Mode.BezierVariousDegree;
         calculateBezier = new CalculateBezierCurve();
         drawingPoints = new List<Vector3>();
+        linePoints= new List<Vector3>();
         //if(car != null && finish != null)
         //    StartCoroutine(CarGo());
     }
@@ -44,10 +46,40 @@ public class MyBezierPath : MonoBehaviour
     {
         //ReceiveInput();
         //Render();
+
+       if(carmove==true)
+        {
+
+            
+            Vector3 a = car.transform.position;
+            Vector3 b = drawingPoints[count + 1];
+
+            car.transform.position += (b - a).normalized  * carSpeed* Time.deltaTime;
+
+            while (Vector3.Distance( car.transform.position,b) <= .1f)
+            {
+                if (count < drawingPoints.Count - 2)
+                {
+                    count++;
+                    b = drawingPoints[count + 1];
+                }
+
+                else
+                {
+
+                    carmove = false;
+                    break;
+                }
+
+            }
+
+        }
+        index = 0;
     }
 
     public void GenerateSpline()
     {
+        
         if (gen.done)
         {
             int i = 0;
@@ -57,9 +89,11 @@ public class MyBezierPath : MonoBehaviour
             {
                 p[i] = gen.dots[i].transform.position;
             }
+           
             points.Clear();
+           
             points.AddRange(p);
-
+           
             RenderBezier3or5Degree();
         }
     }
@@ -69,7 +103,8 @@ public class MyBezierPath : MonoBehaviour
         if (car != null && finish != null)
         {
             //car.SetActive(true);
-            StartCoroutine(CarGo());
+            //StartCoroutine(CarGo());
+            carmove = true;
         }
     }
 
@@ -157,11 +192,14 @@ public class MyBezierPath : MonoBehaviour
 
     private void RenderBezier3or5Degree()
     {
+        GameObject track = GameObject.FindGameObjectWithTag("Track");
         calculateBezier.SetControlPoints(points);
         //drawingPoints = calculateBezier.GetDrawingPointsCR();
 
         drawingPoints = calculateBezier.GetDrawingPoints3or5Degree();
         SetLinePoints(drawingPoints);
+        
+        
     }
 
     private void SetLinePoints(List<Vector3> drawingPoints)
@@ -183,9 +221,9 @@ public class MyBezierPath : MonoBehaviour
     {
         while (true)
         {
-            if (drawingPoints.Count != 0)
+            if (linePoints.Count != 0 && index< linePoints.Count)
             {
-                car.transform.position = drawingPoints[index];
+                car.transform.position = linePoints[index];
                 index++;
                 if (car.transform.position.Equals(finish.position))
                     break;
