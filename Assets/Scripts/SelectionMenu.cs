@@ -10,7 +10,7 @@ public class SelectionMenu : MonoBehaviour
     public GameObject buttonLeft, buttonRight;
     public GameObject actualName;
 
-    private string[] circuitsName = { "Singapore", "Interlagos", "Bahrain" };
+    private string[] circuitsName = { "Singapore", "Interlagos", "Bahrain", "Monza", "MonteCarlo" };
     private int currentIndex;
 
     void Start()

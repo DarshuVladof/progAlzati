@@ -29,8 +29,15 @@ public class PlayerBezierPath : MonoBehaviour
         lineRenderer = GetComponent<LineRenderer>();
         playersControlPoints = new List<Vector3>();
         edgePoints = new List<Vector2>();
-        n = 0;
-        //gamePoints.Add(GameObject.FindGameObjectWithTag("Start").transform.position);
+        n = 1;
+
+        GameObject g = Instantiate(controlPoint);
+
+        g.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+        g.GetComponentInChildren<TextMesh>().text = n.ToString();
+        //gamePoints.Add(g);
+
+
         //coll = new GameObject("Collider").AddComponent<PolygonCollider2D>();
         //coll.transform.parent = lineRenderer.transform;
         //coll = gameObject.AddComponent<PolygonCollider2D>();
@@ -60,7 +67,6 @@ public class PlayerBezierPath : MonoBehaviour
 
             if (raycastOnControlPoint)
             {
-                //Destroy(hit.collider.gameObject);
                 gamePoints.Remove(hit.collider.gameObject);
                 hit.collider.gameObject.SetActive(false);
                 n--;
@@ -90,7 +96,6 @@ public class PlayerBezierPath : MonoBehaviour
                 if (controlPoint != null)
                 {
                     Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    //GameObject g = Instantiate(controlPoint, worldPosition, Quaternion.identity);
                     GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
                     g.transform.position = worldPosition;
                     n++;
