@@ -28,6 +28,7 @@ public class MyBezierPath : MonoBehaviour
     public bool carmove = false;
     public float carSpeed = 10.0f;
     private int count = 0;
+    public float timer=0.0f;
     void Start()
     {
         r = GameObject.Find("Renderer");
@@ -50,10 +51,10 @@ public class MyBezierPath : MonoBehaviour
        if(carmove==true)
         {
 
-            
+            timer += Time.deltaTime;
             Vector3 a = car.transform.position;
             Vector3 b = drawingPoints[count + 1];
-
+            
             car.transform.position += (b - a).normalized  * carSpeed* Time.deltaTime;
 
             while (Vector3.Distance( car.transform.position,b) <= .1f)
@@ -104,6 +105,7 @@ public class MyBezierPath : MonoBehaviour
         {
             //car.SetActive(true);
             //StartCoroutine(CarGo());
+            timer = 0.0f;
             carmove = true;
         }
     }

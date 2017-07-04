@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class InGameGui : MonoBehaviour
 {
     public Button drawButton, startButton;
+    public Text ourScore, playerScore;
 
     private List<GameObject> controlPoints;
     private MyBezierPath bezierPath;
@@ -20,11 +21,13 @@ public class InGameGui : MonoBehaviour
             playerBezierPath.gameObject.SetActive(false);
 
         startButton.enabled = false;
+        
     }
 
     void Update()
     {
-
+        if(bezierPath != null)
+            ourScore.text = bezierPath.timer.ToString();
     }
 
     public void DrawSpline()
@@ -33,12 +36,13 @@ public class InGameGui : MonoBehaviour
         {
             bezierPath.GenerateSpline();
             startButton.enabled = true;
+           
         }
     }
 
     public void CarGo()
     {
-        if (bezierPath != null)
+        if (bezierPath != null) 
             bezierPath.StartCar();
     }
 
