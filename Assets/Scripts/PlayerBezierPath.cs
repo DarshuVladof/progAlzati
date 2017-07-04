@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class PlayerBezierPath : MonoBehaviour
 {
@@ -21,9 +22,12 @@ public class PlayerBezierPath : MonoBehaviour
     private bool updateCollider = false;
     private CheckCollision checkCollision;
 
+    private EventSystem eventSystem;
+
     // Use this for initialization
     void Start()
     {
+        eventSystem = FindObjectOfType<EventSystem>();
         gamePoints = new List<GameObject>();
         playerCalculatebezier = new CalculateBezierCurve();
         lineRenderer = GetComponent<LineRenderer>();
@@ -31,11 +35,11 @@ public class PlayerBezierPath : MonoBehaviour
         edgePoints = new List<Vector2>();
         n = 1;
 
-        GameObject g = Instantiate(controlPoint);
+        //GameObject g = Instantiate(controlPoint);
 
-        g.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
-        g.GetComponentInChildren<TextMesh>().text = n.ToString();
-        //gamePoints.Add(g);
+        //g.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+        //g.GetComponentInChildren<TextMesh>().text = n.ToString();
+        gamePoints.Add(GameObject.FindGameObjectWithTag("Start"));
 
 
         //coll = new GameObject("Collider").AddComponent<PolygonCollider2D>();
@@ -51,73 +55,77 @@ public class PlayerBezierPath : MonoBehaviour
         hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         bool render = false;
 
-        if (Input.GetMouseButtonDown(1))
+        if (!eventSystem.IsPointerOverGameObject())
         {
-            bool raycastOnControlPoint = false;
 
-            for (int i = 0; i < hits.Length; i++)
+            if (Input.GetMouseButtonDown(1))
             {
-                if (hits[i].collider.gameObject.name.StartsWith("Control"))
+                bool raycastOnControlPoint = false;
+
+                for (int i = 0; i < hits.Length; i++)
                 {
-                    hit = hits[i];
-                    raycastOnControlPoint = true;
-                    break;
+                    if (hits[i].collider.gameObject.name.StartsWith("Control"))
+                    {
+                        hit = hits[i];
+                        raycastOnControlPoint = true;
+                        break;
+                    }
+                }
+
+                if (raycastOnControlPoint)
+                {
+                    gamePoints.Remove(hit.collider.gameObject);
+                    hit.collider.gameObject.SetActive(false);
+                    n--;
+                    for (int i = 1; i < gamePoints.Count; i++)
+                    {
+                        gamePoints[i].GetComponentInChildren<TextMesh>().text = (i + 1).ToString();
+                    }
                 }
             }
 
-            if (raycastOnControlPoint)
+            if (Input.GetMouseButtonDown(0))
             {
-                gamePoints.Remove(hit.collider.gameObject);
-                hit.collider.gameObject.SetActive(false);
-                n--;
-                for (int i = 0; i < gamePoints.Count; i++)
+                bool raycastOnControlPoint = false;
+
+                for (int i = 0; i < hits.Length; i++)
                 {
-                    gamePoints[i].GetComponentInChildren<TextMesh>().text = (i + 1).ToString();
+                    if (hits[i].collider.gameObject.name.StartsWith("Control"))
+                    {
+                        hit = hits[i];
+                        raycastOnControlPoint = true;
+                        break;
+                    }
+                }
+
+                if (!raycastOnControlPoint)
+                {
+                    if (controlPoint != null)
+                    {
+                        Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                        GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
+                        g.transform.position = worldPosition;
+                        n++;
+                        g.GetComponentInChildren<TextMesh>().text = n.ToString();
+                        gamePoints.Add(g);
+                        updateCollider = true;
+                    }
+                }
+                else
+                {
+                    //lo forzo perché a volte la funzione OnMouseDown di MovePoint da problemi
+                    gamePoints[gamePoints.IndexOf(hit.collider.gameObject)].GetComponent<MovePoint>().IsPicked = true;
                 }
             }
-        }
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            bool raycastOnControlPoint = false;
+            if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+                render = true;
 
-            for (int i = 0; i < hits.Length; i++)
+            if ((gamePoints.Count - 1) % 5 == 0 && gamePoints.Count - 1 != 0)
             {
-                if (hits[i].collider.gameObject.name.StartsWith("Control"))
-                {
-                    hit = hits[i];
-                    raycastOnControlPoint = true;
-                    break;
-                }
+                if (render)
+                    Render();
             }
-
-            if (!raycastOnControlPoint)
-            {
-                if (controlPoint != null)
-                {
-                    Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
-                    g.transform.position = worldPosition;
-                    n++;
-                    g.GetComponentInChildren<TextMesh>().text = n.ToString();
-                    gamePoints.Add(g);
-                    updateCollider = true;
-                }
-            }
-            else
-            {
-                //lo forzo perché a volte la funzione OnMouseDown di MovePoint da problemi
-                gamePoints[gamePoints.IndexOf(hit.collider.gameObject)].GetComponent<MovePoint>().IsPicked = true;
-            }
-        }
-
-        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
-            render = true;
-
-        if ((gamePoints.Count - 1) % 5 == 0 && gamePoints.Count - 1 != 0)
-        {
-            if (render)
-                Render();
         }
     }
 
