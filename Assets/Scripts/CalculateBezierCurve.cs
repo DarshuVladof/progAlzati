@@ -8,7 +8,7 @@ public class CalculateBezierCurve
     public Generator gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
 
     private List<Vector3> controlPoints;
-    private int curveCount; //numero di curve di bezier di grado 4
+    private int curveCount; //numero di curve di bezier di grado 5
     private Vector3 p0, p1, p2, p3, p4, p5;
     private List<Vector3> points;
 
@@ -23,7 +23,7 @@ public class CalculateBezierCurve
         controlPoints.Clear();
         points.Clear();
         controlPoints.AddRange(newControlPoints);
-        curveCount = (controlPoints.Count - 1) / 3;
+        curveCount = (controlPoints.Count - 1) / 6;
     }
 
     public List<Vector3> GetControlPoints()
@@ -270,6 +270,20 @@ public class CalculateBezierCurve
             (10 * t * t * t * oneMinusT * oneMinusT * p3) +
             (5 * t * t * t * t * oneMinusT * p4) +
             (t * t * t * t * t * p5);
+    }
+
+    public Vector2 GetFirstDerivative(float t, Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4, Vector3 p5)
+    {
+        t = Mathf.Clamp01(t);
+        float oneMinusT = 1f - t;
+        Vector2 d1 = -5 * (oneMinusT * oneMinusT * oneMinusT * oneMinusT) * p0;
+        Vector2 d2 = (5 * (oneMinusT * oneMinusT * oneMinusT * oneMinusT) -20 * t * (oneMinusT * oneMinusT * oneMinusT)) * p1;
+        Vector2 d3 = (20 * t * (oneMinusT * oneMinusT * oneMinusT) -30 * t * t * (oneMinusT * oneMinusT))* p2;
+        Vector2 d4 = (30 * t * t  * (oneMinusT * oneMinusT) -20 * t * t * t * (oneMinusT))* p3;
+        Vector2 d5 = (20 * t * t * t * (oneMinusT) -5 * t * t * t * t) * p4;
+        Vector2 d6 = (5 * t * t * t * t) * p5;
+
+        return d1 + d2 + d3 + d4 + d5 + d6;
     }
 
     //public List<Vector3> GetDrawingPointsCR()

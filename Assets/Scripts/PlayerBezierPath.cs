@@ -19,6 +19,7 @@ public class PlayerBezierPath : MonoBehaviour
     private PolygonCollider2D coll;
     private List<Vector2> edgePoints;
     private bool updateCollider = false;
+    private CheckCollision checkCollision;
 
     // Use this for initialization
     void Start()
@@ -32,7 +33,8 @@ public class PlayerBezierPath : MonoBehaviour
         //gamePoints.Add(GameObject.FindGameObjectWithTag("Start").transform.position);
         //coll = new GameObject("Collider").AddComponent<PolygonCollider2D>();
         //coll.transform.parent = lineRenderer.transform;
-        coll = gameObject.AddComponent<PolygonCollider2D>();
+        //coll = gameObject.AddComponent<PolygonCollider2D>();
+        checkCollision = FindObjectOfType<CheckCollision>();
     }
 
     // Update is called once per frame
@@ -40,7 +42,7 @@ public class PlayerBezierPath : MonoBehaviour
     {
         hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
         hits = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-        bool rendered = false;
+        bool render = false;
 
         if (Input.GetMouseButtonDown(1))
         {
@@ -104,30 +106,24 @@ public class PlayerBezierPath : MonoBehaviour
             }
         }
 
-        if (Input.GetMouseButtonUp(0))
-            updateCollider = true;
+        if (Input.GetMouseButtonUp(0) || Input.GetMouseButtonUp(1))
+            render = true;
 
         if ((gamePoints.Count - 1) % 5 == 0 && gamePoints.Count - 1 != 0)
         {
-            Render();
-            if (updateCollider)
-            {
-                updateCollider = false;
-                AddCollider();
-                rendered = true;
-                print("x");
-            }
-        }
-
-        if(rendered)
-        {
-            Check();
-            rendered = false;
+            if (render)
+                Render();
         }
     }
 
     private void Render()
     {
+        GameObject[] splinePoints = GameObject.FindGameObjectsWithTag("SplinePoint");
+        for(int i = 0; i < splinePoints.Length; i++)
+        {
+            splinePoints[i].SetActive(false);
+        }
+
         playersControlPoints.Clear();
         for (int i = 0; i < gamePoints.Count; i++)
         {
@@ -136,6 +132,18 @@ public class PlayerBezierPath : MonoBehaviour
         }
         playerCalculatebezier.SetControlPoints(playersControlPoints);
         drawingPoints = playerCalculatebezier.GetPlayerDrawingPoints();
+
+        for (int i = 0; i < drawingPoints.Length; i++)
+        {
+            if (!checkCollision.PointIn(drawingPoints[i]))
+            {
+                GameObject g = ObjectPoolingManager.Instance.GetObject("SplinePoint");
+                g.transform.position = drawingPoints[i];
+                
+                //Debug.LogError("" + i);
+            }
+        }
+
         SetLinePoints(drawingPoints);
     }
 
@@ -174,29 +182,6 @@ public class PlayerBezierPath : MonoBehaviour
         }
 
         coll.points = edgePoints.ToArray();
-        
-    }
-
-    void Check()
-    {
-        if(lineRenderer.positionCount != 0)
-        {
-            RaycastHit2D[] hs = Physics2D.RaycastAll(lineRenderer.GetPosition(0), Vector2.zero);
-
-            //print(hs.Length);
-
-            //for(int i = 0; i < hs.Length; i++)
-            //{
-            //    print(hs[i].collider.name);
-            //}
-            
-            //for(int i = 0; i < lineRenderer.positionCount; i++)
-            //{
-            //    RaycastHit2D[] hitt = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(lineRenderer.GetPosition(i)), Vector2.zero);
-            //    RaycastHit2D h = Physics2D.Raycast(lineRenderer.GetPosition(i), Vector2.zero);
-            //    print(hitt.Length);
-            //}
-        }
     }
 }
 

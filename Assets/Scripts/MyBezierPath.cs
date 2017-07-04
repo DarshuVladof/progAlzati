@@ -210,11 +210,11 @@ public class MyBezierPath : MonoBehaviour
 
     public void OnGUI()
     {
-        GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        GUILayout.Label("F1 Line Segments (Click to add points)");
-        GUILayout.Label("F2 Bezier curve (Click to add points)");
-        GUILayout.Label("X  Clear");
-        GUILayout.EndArea();
+        //GUILayout.BeginArea(new Rect(10, 10, 300, 300));
+        //GUILayout.Label("F1 Line Segments (Click to add points)");
+        //GUILayout.Label("F2 Bezier curve (Click to add points)");
+        //GUILayout.Label("X  Clear");
+        //GUILayout.EndArea();
     }
 
     IEnumerator CarGo()
