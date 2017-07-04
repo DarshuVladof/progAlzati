@@ -34,14 +34,7 @@ public class PlayerBezierPath : MonoBehaviour
         playersControlPoints = new List<Vector3>();
         edgePoints = new List<Vector2>();
         n = 1;
-
-        //GameObject g = Instantiate(controlPoint);
-
-        //g.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
-        //g.GetComponentInChildren<TextMesh>().text = n.ToString();
         gamePoints.Add(GameObject.FindGameObjectWithTag("Start"));
-
-
         //coll = new GameObject("Collider").AddComponent<PolygonCollider2D>();
         //coll.transform.parent = lineRenderer.transform;
         //coll = gameObject.AddComponent<PolygonCollider2D>();

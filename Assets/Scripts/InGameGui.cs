@@ -16,7 +16,8 @@ public class InGameGui : MonoBehaviour
         //controlPoints = new List<GameObject>();
         bezierPath = FindObjectOfType<MyBezierPath>();
         playerBezierPath = FindObjectOfType<PlayerBezierPath>();
-        playerBezierPath.gameObject.SetActive(false);
+        if (playerBezierPath.gameObject != null)
+            playerBezierPath.gameObject.SetActive(false);
 
         startButton.enabled = false;
     }
@@ -49,6 +50,7 @@ public class InGameGui : MonoBehaviour
             if (turningPoints[i].activeSelf)
                 turningPoints[i].SetActive(false);
         }
-        playerBezierPath.gameObject.SetActive(true);
+        if (playerBezierPath.gameObject != null)
+            playerBezierPath.gameObject.SetActive(true);
     }
 }
