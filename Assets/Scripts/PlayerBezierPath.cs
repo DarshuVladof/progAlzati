@@ -50,8 +50,7 @@ public class PlayerBezierPath : MonoBehaviour
 
         if (!eventSystem.IsPointerOverGameObject())
         {
-
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetMouseButtonDown(1) || (Input.GetMouseButtonDown(0) && Input.GetKey(KeyCode.LeftShift)))
             {
                 bool raycastOnControlPoint = false;
 
@@ -77,7 +76,7 @@ public class PlayerBezierPath : MonoBehaviour
                 }
             }
 
-            if (Input.GetMouseButtonDown(0))
+            else if (Input.GetMouseButtonDown(0))
             {
                 bool raycastOnControlPoint = false;
 

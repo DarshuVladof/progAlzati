@@ -5,16 +5,13 @@ using UnityEngine.SceneManagement;
 
 public class MainLoader : MonoBehaviour {
 
-	void Start () {
-		
-	}
-	
-	void Update () {
-		
-	}
-
     public void GoToSelectionMenu()
     {
         SceneManager.LoadScene("SelectionMenu");
+    }
+
+    public void Exit()
+    {
+        Application.Quit();
     }
 }

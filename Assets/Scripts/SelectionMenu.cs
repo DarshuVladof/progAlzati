@@ -21,14 +21,17 @@ public class SelectionMenu : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
         {
             Previous();
         }
-        else if (Input.GetKeyDown(KeyCode.RightArrow))
+        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
         {
             Next();
         }
+
+        if(Input.GetKeyDown(KeyCode.Return))
+            SceneManager.LoadScene(circuitsName[currentIndex]);
     }
 
     public void GoToCircuit()
@@ -74,5 +77,10 @@ public class SelectionMenu : MonoBehaviour
         if (previousIndex != -1)
             circuitsList[previousIndex].SetActive(false);
         circuitsList[currentIndex].SetActive(true);
+    }
+
+    public void BackToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 }
