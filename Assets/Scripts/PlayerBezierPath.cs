@@ -24,6 +24,8 @@ public class PlayerBezierPath : MonoBehaviour
     private EventSystem eventSystem;
     private bool splineOutTrack = false;
 
+    List<Vector2> puntiGiunzione = new List<Vector2>();
+
     // Use this for initialization
     void Start()
     {
@@ -115,6 +117,18 @@ public class PlayerBezierPath : MonoBehaviour
 
             if ((gamePoints.Count - 1) % 5 == 0 && gamePoints.Count - 1 != 0)
             {
+                if(gamePoints.Count > 7)
+                {
+                    int pos = gamePoints.Count - 6;
+                    while (pos > 0)
+                    {
+                        gamePoints[pos].transform.position = playerCalculatebezier.adjPoint(gamePoints[pos - 1].transform.position,
+                       gamePoints[pos].transform.position, gamePoints[pos + 1].transform.position);
+                        pos = pos - 5;
+                    }
+                   
+                }
+
                 if (render)
                     Render();
             }
