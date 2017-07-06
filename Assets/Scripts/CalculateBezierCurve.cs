@@ -343,4 +343,19 @@ public class CalculateBezierCurve
     //        (2f * p0 - 5f * p1 + 4f * p2 - p3) * t * t +
     //        (-p0 + 3f * p1 - 3f * p2 + p3) * t * t * t) * 0.5f;
     //}
+
+    public Vector3 adjPoint(Vector3 p1, Vector3 p2, Vector3 p3)
+    {
+        float a, b, c, d, i, step;
+        Vector3 result = new Vector3();
+        i = Vector2.Distance(p1, p2);
+        a = p1.y - p3.y;
+        b = p3.x - p1.x;
+        c = p1.x * p3.y - p1.y * p3.x;
+
+        d = Mathf.Abs(a * p2.x + b * p2.y + c) / Mathf.Sqrt(a * a + b * b);
+        step = Mathf.Sqrt(i * i - d * d);
+        result = p1 + (p3 - p1).normalized * step;
+        return result;
+    }
 }
