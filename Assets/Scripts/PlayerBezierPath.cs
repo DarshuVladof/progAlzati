@@ -158,6 +158,40 @@ public class PlayerBezierPath : MonoBehaviour
         lineRenderer.SetPositions(drawingPoints);
     }
 
+    public void EndSpline()
+    {
+        Vector3[] v = new Vector3[drawingPoints.Length + 1];
+        int i = 0;
+        while(i < v.Length - 1)
+        {
+            v[i] = drawingPoints[i];
+            i++;
+        }
+        v[i] = GameObject.FindGameObjectWithTag("End").transform.position;
+
+        lineRenderer.positionCount = 0;
+        splineOutTrack = false;
+        for (int j = 0; j < v.Length; j++)
+        {
+            if (!checkCollision.PointIn(v[j]))
+            {
+                GameObject g = ObjectPoolingManager.Instance.GetObject("SplinePoint");
+                g.transform.position = v[j];
+                splineOutTrack = true;
+            }
+        }
+
+        lineRenderer.positionCount = v.Length;
+        lineRenderer.SetPositions(v);
+    }
+
+    public bool CheckLastControlPoint()
+    {
+        
+
+        return false;
+    }
+
     public bool SplineOutTrack
     {
         get { return splineOutTrack; }

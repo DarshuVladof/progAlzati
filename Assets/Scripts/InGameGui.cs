@@ -98,7 +98,16 @@ public class InGameGui : MonoBehaviour
 
     public void EndAndRun()
     {
+        playerBezierPath.EndSpline();
 
+        if(playerBezierPath.SplineOutTrack)
+        {
+            Debug.Log("no");
+        }
+        else
+        {
+            Debug.Log("ok");
+        }
     }
 
     public void GoToSelectionMenu()
