@@ -21,8 +21,8 @@ public class PlayerBezierPath : MonoBehaviour
     private List<Vector2> edgePoints;
     private bool updateCollider = false;
     private CheckCollision checkCollision;
-
     private EventSystem eventSystem;
+    private bool splineOutTrack = false;
 
     // Use this for initialization
     void Start()
@@ -138,14 +138,14 @@ public class PlayerBezierPath : MonoBehaviour
         playerCalculatebezier.SetControlPoints(playersControlPoints);
         drawingPoints = playerCalculatebezier.GetPlayerDrawingPoints();
 
+        splineOutTrack = false;
         for (int i = 0; i < drawingPoints.Length; i++)
         {
             if (!checkCollision.PointIn(drawingPoints[i]))
             {
                 GameObject g = ObjectPoolingManager.Instance.GetObject("SplinePoint");
                 g.transform.position = drawingPoints[i];
-                
-                //Debug.LogError("" + i);
+                splineOutTrack = true;
             }
         }
 
@@ -156,6 +156,11 @@ public class PlayerBezierPath : MonoBehaviour
     {
         lineRenderer.positionCount = drawingPoints.Length;
         lineRenderer.SetPositions(drawingPoints);
+    }
+
+    public bool SplineOutTrack
+    {
+        get { return splineOutTrack; }
     }
 
     private void AddCollider()

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Manager : MonoBehaviour
 {
+    public static Manager Instance = null;
     public bool managerInit = false;
 
     [Header("Prefabs for Pooling")]
@@ -15,20 +16,23 @@ public class Manager : MonoBehaviour
 
     void Awake()
     {
-        DontDestroyOnLoad(transform.gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(transform.gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
 
     void Start()
     {
         ObjectPoolingManager.Instance.CreatePool(Dot, 1000, 10000);
         ObjectPoolingManager.Instance.CreatePool(controlPoint, 500, 1000);
-        if (splinePoint != null)
-            ObjectPoolingManager.Instance.CreatePool(splinePoint, 1000, 10000);
+        ObjectPoolingManager.Instance.CreatePool(splinePoint, 1000, 10000);
+
         managerInit = true;
-    }
-
-    void Update()
-    {
-
     }
 }

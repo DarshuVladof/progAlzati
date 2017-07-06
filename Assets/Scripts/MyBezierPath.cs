@@ -33,6 +33,8 @@ public class MyBezierPath : MonoBehaviour
 
     void Start()
     {
+        index = 0; count = 0; timer = 0.0f; carmove = false; carArrived = false;
+
         r = GameObject.Find("Renderer");
         gen = GameObject.FindGameObjectWithTag("Gen").GetComponent<Generator>();
         lineRenderer = GetComponent<LineRenderer>();
@@ -73,6 +75,12 @@ public class MyBezierPath : MonoBehaviour
                 }
             }
         }
+
+        if(carArrived)
+        {
+            StartCoroutine(ResetCarPosition());
+        }
+
         index = 0;
     }
 
@@ -105,6 +113,7 @@ public class MyBezierPath : MonoBehaviour
             //StartCoroutine(CarGo());
             timer = 0.0f;
             carmove = true;
+            count = 0;
         }
     }
 
@@ -245,5 +254,12 @@ public class MyBezierPath : MonoBehaviour
         index = 0;
         yield return new WaitForSeconds(1.0f);
         car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+    }
+
+    IEnumerator ResetCarPosition()
+    {
+        yield return new WaitForSeconds(0.5f);
+        car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+        carArrived = false;
     }
 }
