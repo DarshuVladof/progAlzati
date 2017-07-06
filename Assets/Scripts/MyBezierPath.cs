@@ -29,6 +29,7 @@ public class MyBezierPath : MonoBehaviour
     private double soglia;
     private int count = 0;
     private float timer = 0.0f;
+    private bool carArrived = false;
 
     void Start()
     {
@@ -67,6 +68,7 @@ public class MyBezierPath : MonoBehaviour
                 else
                 {
                     carmove = false;
+                    carArrived = true;
                     break;
                 }
             }
@@ -209,6 +211,11 @@ public class MyBezierPath : MonoBehaviour
     public float Timer
     {
         get { return timer; }
+    }
+
+    public bool CarArrived
+    {
+        get { return carArrived; }
     }
 
     public void OnGUI()

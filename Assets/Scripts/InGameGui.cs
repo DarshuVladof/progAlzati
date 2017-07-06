@@ -6,14 +6,19 @@ using UnityEngine.UI;
 
 public class InGameGui : MonoBehaviour
 {
-    public Button drawButton, startButton;
+    public Button drawButton, runButton, createSpline, backButton;
     public Text ourScore, playerScore;
-    public GameObject pausePanel, generalPanel;
+    public GameObject pausePanel, generalPanel, endAndRun;
 
     private List<GameObject> controlPoints;
     private MyBezierPath bezierPath;
     private PlayerBezierPath playerBezierPath;
     private bool pause = false;
+
+    private enum Circuit {
+        barahe,
+        dsa
+    }
 
     void Start()
     {
@@ -23,7 +28,9 @@ public class InGameGui : MonoBehaviour
         if (playerBezierPath.gameObject != null)
             playerBezierPath.gameObject.SetActive(false);
 
-        startButton.enabled = false;
+        runButton.gameObject.SetActive(false);
+        endAndRun.SetActive(false);
+        backButton.gameObject.SetActive(false);
     }
 
     void Update()
@@ -48,8 +55,12 @@ public class InGameGui : MonoBehaviour
 
         ourScore.text = "Nostro Tempo: ";
         playerScore.text = "-    Tuo Tempo: ";
-        if(bezierPath != null)
+        if (bezierPath != null)
+        {
             ourScore.text += bezierPath.Timer.ToString("0.000");
+            if (bezierPath.CarArrived)
+                createSpline.gameObject.SetActive(true);
+        }
     }
 
     public void DrawSpline()
@@ -57,8 +68,7 @@ public class InGameGui : MonoBehaviour
         if (bezierPath != null)
         {
             bezierPath.GenerateSpline();
-            startButton.enabled = true;
-           
+            runButton.gameObject.SetActive(true);
         }
     }
 
@@ -66,6 +76,7 @@ public class InGameGui : MonoBehaviour
     {
         if (bezierPath != null) 
             bezierPath.StartCar();
+        createSpline.gameObject.SetActive(false);
     }
 
     public void GenerateSpline()
@@ -76,8 +87,14 @@ public class InGameGui : MonoBehaviour
             if (turningPoints[i].activeSelf)
                 turningPoints[i].SetActive(false);
         }
+
         if (playerBezierPath.gameObject != null)
             playerBezierPath.gameObject.SetActive(true);
+        if (bezierPath.gameObject != null)
+            bezierPath.gameObject.SetActive(false);
+
+        drawButton.gameObject.SetActive(false);
+        backButton.gameObject.SetActive(true);
     }
 
     public void GoToSelectionMenu()
@@ -92,4 +109,15 @@ public class InGameGui : MonoBehaviour
         pause = false;
         Time.timeScale = 1;
     }
+
+    public void BackButton()
+    {
+        backButton.gameObject.SetActive(false);
+        if (playerBezierPath.gameObject != null)
+            playerBezierPath.gameObject.SetActive(false);
+        if (bezierPath.gameObject != null)
+            bezierPath.gameObject.SetActive(true);
+    }
+
+    
 }
