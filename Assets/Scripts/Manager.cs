@@ -29,9 +29,9 @@ public class Manager : MonoBehaviour
 
     void Start()
     {
-        ObjectPoolingManager.Instance.CreatePool(Dot, 1000, 10000);
-        ObjectPoolingManager.Instance.CreatePool(controlPoint, 500, 1000);
-        ObjectPoolingManager.Instance.CreatePool(splinePoint, 1000, 10000);
+        ObjectPoolingManager.Instance.CreatePool(Dot, 1000, 1000000);
+        ObjectPoolingManager.Instance.CreatePool(controlPoint, 500, 100000);
+        ObjectPoolingManager.Instance.CreatePool(splinePoint, 1000, 100000);
 
         managerInit = true;
     }

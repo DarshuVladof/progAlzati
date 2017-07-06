@@ -112,6 +112,13 @@ public class InGameGui : MonoBehaviour
 
     public void GoToSelectionMenu()
     {
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("Dot"))
+            g.SetActive(false);
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("CP"))
+            g.SetActive(false);
+        foreach (GameObject g in GameObject.FindGameObjectsWithTag("SplinePoint"))
+            g.SetActive(false);
+
         SceneManager.LoadScene("SelectionMenu");
         Time.timeScale = 1;
     }
