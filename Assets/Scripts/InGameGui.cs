@@ -14,6 +14,7 @@ public class InGameGui : MonoBehaviour
     private PlayerBezierPath playerBezierPath;
     private bool pause = false;
     private bool carGo = false;
+    private bool ourSplineGenerated = false;
 
     void Start()
     {
@@ -65,6 +66,8 @@ public class InGameGui : MonoBehaviour
         {
             bezierPath.GenerateSpline();
             runButton.gameObject.SetActive(true);
+            drawButton.gameObject.SetActive(false);
+            ourSplineGenerated = true;
         }
     }
 
@@ -91,9 +94,14 @@ public class InGameGui : MonoBehaviour
         if (bezierPath.gameObject != null)
             bezierPath.gameObject.SetActive(false);
 
-        drawButton.gameObject.SetActive(false);
+        if(drawButton.gameObject.activeSelf)
+            drawButton.gameObject.SetActive(false);
+        if (runButton.gameObject.activeSelf)
+            runButton.gameObject.SetActive(false);
+
         backButton.gameObject.SetActive(true);
         endAndRun.gameObject.SetActive(true);
+        createSpline.gameObject.SetActive(false);
     }
 
     public void EndAndRun()
@@ -135,6 +143,13 @@ public class InGameGui : MonoBehaviour
             playerBezierPath.gameObject.SetActive(false);
         if (bezierPath.gameObject != null)
             bezierPath.gameObject.SetActive(true);
+
+        if (ourSplineGenerated)
+            runButton.gameObject.SetActive(true);
+        else
+            drawButton.gameObject.SetActive(true);
+
+        createSpline.gameObject.SetActive(true);
     }
 
     private void SetCorrectScore()
