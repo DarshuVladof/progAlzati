@@ -107,6 +107,7 @@ public class InGameGui : MonoBehaviour
         else
         {
             Debug.Log("ok");
+            playerBezierPath.carmove = true;
         }
     }
 

@@ -13,7 +13,7 @@ public class PlayerBezierPath : MonoBehaviour
     private RaycastHit2D[] hits;
     private CalculateBezierCurve playerCalculatebezier;
     private LineRenderer lineRenderer;
-    private List<Vector3> playersControlPoints;
+    private List<Vector3> playersControlPoints, playerDrawingPoints;
     private Vector3[] drawingPoints;
 
     private int n;
@@ -25,6 +25,17 @@ public class PlayerBezierPath : MonoBehaviour
     private bool splineOutTrack = false;
 
     List<Vector2> puntiGiunzione = new List<Vector2>();
+
+
+    public GameObject car;
+    public Transform finish;
+    public bool carmove = false;
+    public float carSpeed = 10.0f;
+
+    private double soglia;
+    private int count = 0;
+    private float timer = 0.0f;
+    private bool carArrived = false;
 
     // Use this for initialization
     void Start()
@@ -41,6 +52,9 @@ public class PlayerBezierPath : MonoBehaviour
         //coll.transform.parent = lineRenderer.transform;
         //coll = gameObject.AddComponent<PolygonCollider2D>();
         checkCollision = FindObjectOfType<CheckCollision>();
+        finish = GameObject.FindGameObjectWithTag("End").transform;
+        car = GameObject.FindGameObjectWithTag("PlayerCar");
+        playerDrawingPoints = new List<Vector3>();
     }
 
     // Update is called once per frame
@@ -133,6 +147,35 @@ public class PlayerBezierPath : MonoBehaviour
                     Render();
             }
         }
+
+        if (carmove == true)
+        {
+            timer += Time.deltaTime;
+            Vector3 a = car.transform.position;
+            Vector3 b = drawingPoints[count + 1];
+
+            car.transform.position += (b - a).normalized * carSpeed * Time.deltaTime;
+
+            while (Vector3.Distance(car.transform.position, b) <= .1f)
+            {
+                if (count < playerDrawingPoints.Count - 2)
+                {
+                    count++;
+                    b = drawingPoints[count + 1];
+                }
+                else
+                {
+                    carmove = false;
+                    carArrived = true;
+                    break;
+                }
+            }
+        }
+
+        if (carArrived)
+        {
+            StartCoroutine(ResetCarPosition());
+        }
     }
 
     private void Render()
@@ -151,6 +194,7 @@ public class PlayerBezierPath : MonoBehaviour
         }
         playerCalculatebezier.SetControlPoints(playersControlPoints);
         drawingPoints = playerCalculatebezier.GetPlayerDrawingPoints();
+        playerDrawingPoints.AddRange(drawingPoints);
 
         splineOutTrack = false;
         for (int i = 0; i < drawingPoints.Length; i++)
@@ -240,6 +284,13 @@ public class PlayerBezierPath : MonoBehaviour
         }
 
         coll.points = edgePoints.ToArray();
+    }
+
+    IEnumerator ResetCarPosition()
+    {
+        yield return new WaitForSeconds(0.5f);
+        car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
+        carArrived = false;
     }
 }
 
