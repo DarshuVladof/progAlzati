@@ -15,13 +15,17 @@ public class InGameGui : MonoBehaviour
     private bool pause = false;
     private bool carGo = false;
     private bool ourSplineGenerated = false;
+    private List<GameObject> playerControlPoints;
 
     void Start()
     {
         SetCorrectScore();
+        playerControlPoints = new List<GameObject>();
+        playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
 
         bezierPath = FindObjectOfType<MyBezierPath>();
         playerBezierPath = FindObjectOfType<PlayerBezierPath>();
+        playerBezierPath.car.SetActive(false);
         if (playerBezierPath.gameObject != null)
             playerBezierPath.gameObject.SetActive(false);
 
@@ -46,8 +50,8 @@ public class InGameGui : MonoBehaviour
 
         if (carGo)
         {
-            ourScore.text = "Nostro Tempo: ";
-            playerScore.text = "-    Tuo Tempo: ";
+            ourScore.text = "Our Time: ";
+            playerScore.text = "-    Your Time: ";
             if (bezierPath != null)
             {
                 ourScore.text += bezierPath.Timer.ToString("0.000");
@@ -94,7 +98,10 @@ public class InGameGui : MonoBehaviour
         if (bezierPath.gameObject != null)
             bezierPath.gameObject.SetActive(false);
 
-        if(drawButton.gameObject.activeSelf)
+        playerBezierPath.car.SetActive(true);
+        bezierPath.car.SetActive(false);
+
+        if (drawButton.gameObject.activeSelf)
             drawButton.gameObject.SetActive(false);
         if (runButton.gameObject.activeSelf)
             runButton.gameObject.SetActive(false);
@@ -102,20 +109,32 @@ public class InGameGui : MonoBehaviour
         backButton.gameObject.SetActive(true);
         endAndRun.gameObject.SetActive(true);
         createSpline.gameObject.SetActive(false);
+
+        playerBezierPath.gamePoints = playerControlPoints;
+        for(int i = 1; i < playerControlPoints.Count; i++)
+        {
+            if (!playerControlPoints[i].activeSelf)
+                playerControlPoints[i].SetActive(true);
+        }
     }
 
     public void EndAndRun()
     {
-        playerBezierPath.EndSpline();
-
         if(playerBezierPath.SplineOutTrack)
         {
-            Debug.Log("no");
+            Debug.Log("Spline fuori dal circuito");
         }
         else
         {
-            Debug.Log("ok");
-            playerBezierPath.carmove = true;
+            if(playerBezierPath.CheckLastControlPoint())
+            {
+                Debug.Log("ok");
+                playerBezierPath.carmove = true;
+            }
+            else
+            {
+                Debug.Log("Ultimo punto troppo distante");
+            }
         }
     }
 
@@ -145,12 +164,23 @@ public class InGameGui : MonoBehaviour
         if (bezierPath.gameObject != null)
             bezierPath.gameObject.SetActive(true);
 
+        playerBezierPath.car.SetActive(false);
+        bezierPath.car.SetActive(true);
+
         if (ourSplineGenerated)
             runButton.gameObject.SetActive(true);
         else
             drawButton.gameObject.SetActive(true);
 
         createSpline.gameObject.SetActive(true);
+        endAndRun.gameObject.SetActive(false);
+
+        playerControlPoints = playerBezierPath.gamePoints;
+        for (int i = 1; i < playerControlPoints.Count; i++)
+        {
+            if (playerControlPoints[i].activeSelf)
+                playerControlPoints[i].SetActive(false);
+        }
     }
 
     private void SetCorrectScore()

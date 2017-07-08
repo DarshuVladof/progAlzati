@@ -31,7 +31,7 @@ public class MovePoint : MonoBehaviour
 
     void OnMouseDown()
     {
-        isPicked = true;
+        //isPicked = true;
     }
 
     public bool IsPicked

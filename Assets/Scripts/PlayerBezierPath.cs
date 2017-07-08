@@ -8,12 +8,16 @@ public class PlayerBezierPath : MonoBehaviour
 {
     public List<GameObject> gamePoints;
     public GameObject controlPoint;
+    public GameObject car;
+    public Transform finish;
+    public bool carmove = false;
+    public float carSpeed = 10.0f;
 
     private RaycastHit2D hit;
     private RaycastHit2D[] hits;
     private CalculateBezierCurve playerCalculatebezier;
     private LineRenderer lineRenderer;
-    private List<Vector3> playersControlPoints, playerDrawingPoints;
+    private List<Vector3> playersControlPoints;
     private Vector3[] drawingPoints;
 
     private int n;
@@ -24,13 +28,7 @@ public class PlayerBezierPath : MonoBehaviour
     private EventSystem eventSystem;
     private bool splineOutTrack = false;
 
-    List<Vector2> puntiGiunzione = new List<Vector2>();
-
-
-    public GameObject car;
-    public Transform finish;
-    public bool carmove = false;
-    public float carSpeed = 10.0f;
+    private List<Vector2> puntiGiunzione = new List<Vector2>();
 
     private double soglia;
     private int count = 0;
@@ -53,8 +51,7 @@ public class PlayerBezierPath : MonoBehaviour
         //coll = gameObject.AddComponent<PolygonCollider2D>();
         checkCollision = FindObjectOfType<CheckCollision>();
         finish = GameObject.FindGameObjectWithTag("End").transform;
-        car = GameObject.FindGameObjectWithTag("PlayerCar");
-        playerDrawingPoints = new List<Vector3>();
+        //car = GameObject.FindGameObjectWithTag("PlayerCar");
     }
 
     // Update is called once per frame
@@ -131,16 +128,16 @@ public class PlayerBezierPath : MonoBehaviour
 
             if ((gamePoints.Count - 1) % 5 == 0 && gamePoints.Count - 1 != 0)
             {
-                if(gamePoints.Count > 7)
+                if (gamePoints.Count > 7)
                 {
                     int pos = gamePoints.Count - 6;
                     while (pos > 0)
                     {
                         gamePoints[pos].transform.position = playerCalculatebezier.adjPoint(gamePoints[pos - 1].transform.position,
-                       gamePoints[pos].transform.position, gamePoints[pos + 1].transform.position);
+                            gamePoints[pos].transform.position, gamePoints[pos + 1].transform.position);
                         pos = pos - 5;
                     }
-                   
+
                 }
 
                 if (render)
@@ -158,7 +155,7 @@ public class PlayerBezierPath : MonoBehaviour
 
             while (Vector3.Distance(car.transform.position, b) <= .1f)
             {
-                if (count < playerDrawingPoints.Count - 2)
+                if (count < drawingPoints.Length - 2)
                 {
                     count++;
                     b = drawingPoints[count + 1];
@@ -181,7 +178,7 @@ public class PlayerBezierPath : MonoBehaviour
     private void Render()
     {
         GameObject[] splinePoints = GameObject.FindGameObjectsWithTag("SplinePoint");
-        for(int i = 0; i < splinePoints.Length; i++)
+        for (int i = 0; i < splinePoints.Length; i++)
         {
             splinePoints[i].SetActive(false);
         }
@@ -194,7 +191,6 @@ public class PlayerBezierPath : MonoBehaviour
         }
         playerCalculatebezier.SetControlPoints(playersControlPoints);
         drawingPoints = playerCalculatebezier.GetPlayerDrawingPoints();
-        playerDrawingPoints.AddRange(drawingPoints);
 
         splineOutTrack = false;
         for (int i = 0; i < drawingPoints.Length; i++)
@@ -216,37 +212,12 @@ public class PlayerBezierPath : MonoBehaviour
         lineRenderer.SetPositions(drawingPoints);
     }
 
-    public void EndSpline()
-    {
-        Vector3[] v = new Vector3[drawingPoints.Length + 1];
-        int i = 0;
-        while(i < v.Length - 1)
-        {
-            v[i] = drawingPoints[i];
-            i++;
-        }
-        v[i] = GameObject.FindGameObjectWithTag("End").transform.position;
-
-        lineRenderer.positionCount = 0;
-        splineOutTrack = false;
-        for (int j = 0; j < v.Length; j++)
-        {
-            if (!checkCollision.PointIn(v[j]))
-            {
-                GameObject g = ObjectPoolingManager.Instance.GetObject("SplinePoint");
-                g.transform.position = v[j];
-                splineOutTrack = true;
-            }
-        }
-
-        lineRenderer.positionCount = v.Length;
-        lineRenderer.SetPositions(v);
-    }
-
     public bool CheckLastControlPoint()
     {
-        
-
+        if(Vector3.Distance(gamePoints[gamePoints.Count - 1].transform.position, finish.position) <= 0.1f)
+        {
+            return true;
+        }
         return false;
     }
 
@@ -288,6 +259,7 @@ public class PlayerBezierPath : MonoBehaviour
 
     IEnumerator ResetCarPosition()
     {
+        count = 0;
         yield return new WaitForSeconds(0.5f);
         car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
         carArrived = false;
