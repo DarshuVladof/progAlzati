@@ -214,7 +214,7 @@ public class PlayerBezierPath : MonoBehaviour
 
     public bool CheckLastControlPoint()
     {
-        if(Vector3.Distance(gamePoints[gamePoints.Count - 1].transform.position, finish.position) <= 0.1f)
+        if (Vector3.Distance(gamePoints[gamePoints.Count - 1].transform.position, finish.position) <= 0.1f)
         {
             return true;
         }
@@ -224,6 +224,17 @@ public class PlayerBezierPath : MonoBehaviour
     public bool SplineOutTrack
     {
         get { return splineOutTrack; }
+    }
+
+    public float Timer
+    {
+        get { return timer; }
+        set { timer = value; }
+    }
+
+    public bool CarArrived
+    {
+        get { return carArrived; }
     }
 
     private void AddCollider()

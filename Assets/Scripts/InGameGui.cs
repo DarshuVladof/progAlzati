@@ -13,13 +13,15 @@ public class InGameGui : MonoBehaviour
     private MyBezierPath bezierPath;
     private PlayerBezierPath playerBezierPath;
     private bool pause = false;
-    private bool carGo = false;
+    private bool ourCarGo = false, playerCarGo = false;
     private bool ourSplineGenerated = false;
     private List<GameObject> playerControlPoints;
 
     void Start()
     {
         SetCorrectScore();
+        SetPlayerHighScore();
+
         playerControlPoints = new List<GameObject>();
         playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
 
@@ -48,10 +50,10 @@ public class InGameGui : MonoBehaviour
             }
         }
 
-        if (carGo)
+        if (ourCarGo)
         {
             ourScore.text = "Our Time: ";
-            playerScore.text = "-    Your Time: ";
+            
             if (bezierPath != null)
             {
                 ourScore.text += bezierPath.Timer.ToString("0.000");
@@ -59,6 +61,20 @@ public class InGameGui : MonoBehaviour
                 {
                     createSpline.gameObject.SetActive(true);
                     runButton.enabled = true;
+                }
+            }
+        }
+
+        if(playerCarGo)
+        {
+            playerScore.text = "-    Your Time: ";
+
+            if(playerBezierPath != null)
+            {
+                playerScore.text += playerBezierPath.Timer.ToString("0.000");
+                if(playerBezierPath.CarArrived)
+                {
+                    endAndRun.GetComponent<Button>().enabled = true;
                 }
             }
         }
@@ -80,7 +96,7 @@ public class InGameGui : MonoBehaviour
         if (bezierPath != null)
             bezierPath.StartCar();
         createSpline.gameObject.SetActive(false);
-        carGo = true;
+        ourCarGo = true;
         runButton.enabled = false;
     }
 
@@ -129,6 +145,9 @@ public class InGameGui : MonoBehaviour
             if(playerBezierPath.CheckLastControlPoint())
             {
                 playerBezierPath.carmove = true;
+                endAndRun.GetComponent<Button>().enabled = false;
+                playerCarGo = true;
+                playerBezierPath.Timer = 0.0f;
             }
             else
             {
@@ -193,6 +212,11 @@ public class InGameGui : MonoBehaviour
             case "Singapore": ourScore.text = "Nostro Tempo: " + OurScores.SingaporeScore; break;
             default: break;
         }
+    }
+
+    private void SetPlayerHighScore()
+    {
+
     }
 
     private void Pause()
