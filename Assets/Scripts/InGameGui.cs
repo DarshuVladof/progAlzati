@@ -8,7 +8,7 @@ public class InGameGui : MonoBehaviour
 {
     public Button drawButton, runButton, createSpline, backButton;
     public Text ourScore, playerScore;
-    public GameObject pausePanel, generalPanel, endAndRun;
+    public GameObject pausePanel, generalPanel, errorPanel, endAndRun;
 
     private MyBezierPath bezierPath;
     private PlayerBezierPath playerBezierPath;
@@ -122,18 +122,17 @@ public class InGameGui : MonoBehaviour
     {
         if(playerBezierPath.SplineOutTrack)
         {
-            Debug.Log("Spline fuori dal circuito");
+            StartCoroutine(ErrorPanel("Spline is out of track"));
         }
         else
         {
             if(playerBezierPath.CheckLastControlPoint())
             {
-                Debug.Log("ok");
                 playerBezierPath.carmove = true;
             }
             else
             {
-                Debug.Log("Ultimo punto troppo distante");
+                StartCoroutine(ErrorPanel("Last point is not near end"));
             }
         }
     }
@@ -220,5 +219,15 @@ public class InGameGui : MonoBehaviour
         drawButton.enabled = true;
         runButton.enabled = true;
         createSpline.enabled = true;
+    }
+
+    IEnumerator ErrorPanel(string message)
+    {
+        errorPanel.SetActive(true);
+        errorPanel.GetComponentInChildren<Text>().text = message;
+        GameObject.Find("GUI").GetComponent<GraphicRaycaster>().enabled = false;
+        yield return new WaitForSeconds(2.0f);
+        errorPanel.SetActive(false);
+        GameObject.Find("GUI").GetComponent<GraphicRaycaster>().enabled = true;
     }
 }
