@@ -82,12 +82,16 @@ public class InGameGui : MonoBehaviour
 
     public void DrawSpline()
     {
+        backButton.gameObject.SetActive(true);
         if (bezierPath != null)
         {
+            bezierPath.car.SetActive(true);
+            bezierPath.gameObject.SetActive(true);
             bezierPath.GenerateSpline();
             runButton.gameObject.SetActive(true);
             drawButton.gameObject.SetActive(false);
             ourSplineGenerated = true;
+            createSpline.gameObject.SetActive(false);
         }
     }
 
@@ -176,29 +180,48 @@ public class InGameGui : MonoBehaviour
 
     public void BackButton()
     {
-        backButton.gameObject.SetActive(false);
-        if (playerBezierPath.gameObject != null)
-            playerBezierPath.gameObject.SetActive(false);
-        if (bezierPath.gameObject != null)
-            bezierPath.gameObject.SetActive(true);
-
-        playerBezierPath.car.SetActive(false);
-        bezierPath.car.SetActive(true);
-
-        if (ourSplineGenerated)
-            runButton.gameObject.SetActive(true);
-        else
-            drawButton.gameObject.SetActive(true);
-
-        createSpline.gameObject.SetActive(true);
-        endAndRun.gameObject.SetActive(false);
-
-        playerControlPoints = playerBezierPath.gamePoints;
-        for (int i = 1; i < playerControlPoints.Count; i++)
+        if (ourSplineGenerated == true && !ourCarGo)
         {
-            if (playerControlPoints[i].activeSelf)
-                playerControlPoints[i].SetActive(false);
+            backButton.gameObject.SetActive(false);
+            if (bezierPath.gameObject != null)
+                bezierPath.gameObject.SetActive(false);
+            runButton.gameObject.SetActive(false);
+            drawButton.gameObject.SetActive(true);
+            bezierPath.car.SetActive(false);
+            ourSplineGenerated = false;
+            createSpline.gameObject.SetActive(true);
+
         }
+        else if(!playerCarGo)
+        {
+            backButton.gameObject.SetActive(false);
+            if (playerBezierPath.gameObject != null)
+                playerBezierPath.gameObject.SetActive(false);
+            if (bezierPath.gameObject != null)
+                bezierPath.gameObject.SetActive(true);
+
+            playerBezierPath.car.SetActive(false);
+            bezierPath.car.SetActive(true);
+
+            if (ourSplineGenerated)
+                runButton.gameObject.SetActive(true);
+            else
+                drawButton.gameObject.SetActive(true);
+
+            createSpline.gameObject.SetActive(true);
+            endAndRun.gameObject.SetActive(false);
+
+            playerControlPoints = playerBezierPath.gamePoints;
+            for (int i = 1; i < playerControlPoints.Count; i++)
+            {
+                if (playerControlPoints[i].activeSelf)
+                    playerControlPoints[i].SetActive(false);
+            }
+            GameObject[] g = GameObject.FindGameObjectsWithTag("SplinePoint");
+            foreach (GameObject p in g)
+                p.gameObject.SetActive(false);
+        }
+        
     }
 
     private void SetCorrectScore()

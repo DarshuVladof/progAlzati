@@ -34,6 +34,7 @@ public class PlayerBezierPath : MonoBehaviour
     private int count = 0;
     private float timer = 0.0f;
     private bool carArrived = false;
+    public float threshold= 0.5f;
 
     // Use this for initialization
     void Start()
@@ -214,7 +215,7 @@ public class PlayerBezierPath : MonoBehaviour
 
     public bool CheckLastControlPoint()
     {
-        if (Vector3.Distance(gamePoints[gamePoints.Count - 1].transform.position, finish.position) <= 0.1f)
+        if (Vector3.Distance(gamePoints[gamePoints.Count - 1].transform.position, finish.position) <= threshold)
         {
             return true;
         }
