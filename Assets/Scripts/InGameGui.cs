@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class InGameGui : MonoBehaviour
 {
     public Button drawButton, runButton, createSpline, backButton;
-    public Text ourScore, playerScore;
+    public Text ourTime, playerTime, ourScore, playerScore;
     public GameObject pausePanel, generalPanel, errorPanel, endAndRun;
 
     private MyBezierPath bezierPath;
@@ -16,6 +16,8 @@ public class InGameGui : MonoBehaviour
     private bool ourCarGo = false, playerCarGo = false;
     private bool ourSplineGenerated = false;
     private List<GameObject> playerControlPoints;
+    private float ourTimer, playerTimer;
+    private int ourPoints, ourCurves, playerPoints, PlayerCurves;
 
     void Start()
     {
@@ -52,13 +54,18 @@ public class InGameGui : MonoBehaviour
 
         if (ourCarGo)
         {
-            ourScore.text = "Our Time: ";
+            ourTimer = 0.0f;
+            ourTime.text = "Our Time: ";
             
             if (bezierPath != null)
             {
-                ourScore.text += bezierPath.Timer.ToString("0.000");
+                ourTimer = bezierPath.Timer;
+                ourTime.text += bezierPath.Timer.ToString("0.000");
                 if (bezierPath.CarArrived)
                 {
+                    Debug.Log(ourTimer);
+                    Debug.Log((10 * ((ourTimer / ourPoints) + (ourTimer /ourCurves)) / 2));
+                    ourScore.text = "Our score: "+( (((int)(1000*ourTimer) / bezierPath.dots)+((int)(1000* ourTimer) / bezierPath.curves))/2).ToString();
                     createSpline.gameObject.SetActive(true);
                     runButton.enabled = true;
                 }
@@ -67,13 +74,15 @@ public class InGameGui : MonoBehaviour
 
         if(playerCarGo)
         {
-            playerScore.text = "-    Your Time: ";
+            playerTime.text = "-    Your Time: ";
 
             if(playerBezierPath != null)
-            {
-                playerScore.text += playerBezierPath.Timer.ToString("0.000");
+            {   
+                 playerTime.text += playerBezierPath.Timer.ToString("0.000");
                 if(playerBezierPath.CarArrived)
                 {
+                    playerScore.text = "-    Your Score: " + ((((int)(1000 * playerBezierPath.Timer) / playerBezierPath.playersControlPoints.Count) + ((int)(1000 * playerBezierPath.Timer) / ((playerBezierPath.playersControlPoints.Count + 1) / 6))) / 2).ToString();
+                    playerCarGo = false;
                     endAndRun.GetComponent<Button>().enabled = true;
                 }
             }
@@ -88,6 +97,8 @@ public class InGameGui : MonoBehaviour
             bezierPath.car.SetActive(true);
             bezierPath.gameObject.SetActive(true);
             bezierPath.GenerateSpline();
+            ourPoints = bezierPath.dots;
+            ourCurves = bezierPath.curves;
             runButton.gameObject.SetActive(true);
             drawButton.gameObject.SetActive(false);
             ourSplineGenerated = true;
@@ -228,11 +239,11 @@ public class InGameGui : MonoBehaviour
     {
         switch (SceneManager.GetActiveScene().name)
         {
-            case "Bahrain": ourScore.text = "Nostro Tempo: " + OurScores.BahrainScore; break;
-            case "Interlagos": ourScore.text = "Nostro Tempo: " + OurScores.IntelagosScore; break;
-            case "MonteCarlo": ourScore.text = "Nostro Tempo: " + OurScores.MonteCarloScore; break;
-            case "Monza": ourScore.text = "Nostro Tempo: " + OurScores.MonzaScore; break;
-            case "Singapore": ourScore.text = "Nostro Tempo: " + OurScores.SingaporeScore; break;
+            case "Bahrain": ourTime.text = "Nostro Tempo: " + OurScores.BahrainScore; break;
+            case "Interlagos": ourTime.text = "Nostro Tempo: " + OurScores.IntelagosScore; break;
+            case "MonteCarlo": ourTime.text = "Nostro Tempo: " + OurScores.MonteCarloScore; break;
+            case "Monza": ourTime.text = "Nostro Tempo: " + OurScores.MonzaScore; break;
+            case "Singapore": ourTime.text = "Nostro Tempo: " + OurScores.SingaporeScore; break;
             default: break;
         }
     }

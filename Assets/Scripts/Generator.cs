@@ -12,6 +12,7 @@ public class Generator : MonoBehaviour
     public int confirms = 0;
     private int index = 1;
     public bool done = false;
+    public int points, curves;
     
     void Start()
     {
@@ -19,6 +20,8 @@ public class Generator : MonoBehaviour
         start = GameObject.FindGameObjectWithTag("Start");
         end = GameObject.FindGameObjectWithTag("End");
         orderedTurns = new List<GameObject>();
+        points = 0;
+        curves = 0;
     }
 
     void Update()
@@ -42,8 +45,13 @@ public class Generator : MonoBehaviour
                             dots.Add(turns[i].GetComponent<TurningPoint>().previous);
                             dots.Add(turns[i].GetComponent<TurningPoint>().turn);
                             dots.Add(turns[i].GetComponent<TurningPoint>().next);
+                            points += 3;
                             if ((turns[i].GetComponent<TurningPoint>().wide))
+                            {
                                 dots.Add(turns[i].GetComponent<TurningPoint>().wideNext);
+                                points += 2;
+                            }
+                            curves++;
 
                         }
                     }

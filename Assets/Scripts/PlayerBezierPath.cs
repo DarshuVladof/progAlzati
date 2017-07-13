@@ -17,7 +17,7 @@ public class PlayerBezierPath : MonoBehaviour
     private RaycastHit2D[] hits;
     private CalculateBezierCurve playerCalculatebezier;
     private LineRenderer lineRenderer;
-    private List<Vector3> playersControlPoints;
+    public List<Vector3> playersControlPoints;
     private Vector3[] drawingPoints;
 
     private int n;
@@ -108,6 +108,7 @@ public class PlayerBezierPath : MonoBehaviour
                 {
                     if (controlPoint != null)
                     {
+                        
                         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
                         g.transform.position = worldPosition;

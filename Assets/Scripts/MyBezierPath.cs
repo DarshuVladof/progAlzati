@@ -17,6 +17,7 @@ public class MyBezierPath : MonoBehaviour
     public Transform finish;
     public bool carmove = false;
     public float carSpeed = 10.0f;
+    public int dots, curves;
 
     private Generator gen;
     private Mode mode;
@@ -30,6 +31,7 @@ public class MyBezierPath : MonoBehaviour
     private int count = 0;
     private float timer = 0.0f;
     private bool carArrived = false;
+    
 
     void Start()
     {
@@ -89,6 +91,8 @@ public class MyBezierPath : MonoBehaviour
 
         if (gen.done)
         {
+            dots = gen.points;
+            curves = gen.curves;
             int i = 0;
             p = new Vector3[gen.dots.Count];
 
