@@ -56,7 +56,7 @@ public class InGameGui : MonoBehaviour
         {
             ourTimer = 0.0f;
             ourTime.text = "Our Time: ";
-            
+
             if (bezierPath != null)
             {
                 ourTimer = bezierPath.Timer;
@@ -64,22 +64,22 @@ public class InGameGui : MonoBehaviour
                 if (bezierPath.CarArrived)
                 {
                     Debug.Log(ourTimer);
-                    Debug.Log((10 * ((ourTimer / ourPoints) + (ourTimer /ourCurves)) / 2));
-                    ourScore.text = "Our score: "+( (((int)(1000*ourTimer) / bezierPath.dots)+((int)(1000* ourTimer) / bezierPath.curves))/2).ToString();
+                    Debug.Log((10 * ((ourTimer / ourPoints) + (ourTimer / ourCurves)) / 2));
+                    ourScore.text = "Our score: " + ((((int)(1000 * ourTimer) / bezierPath.dots) + ((int)(1000 * ourTimer) / bezierPath.curves)) / 2).ToString();
                     createSpline.gameObject.SetActive(true);
                     runButton.enabled = true;
                 }
             }
         }
 
-        if(playerCarGo)
+        if (playerCarGo)
         {
             playerTime.text = "-    Your Time: ";
 
-            if(playerBezierPath != null)
-            {   
-                 playerTime.text += playerBezierPath.Timer.ToString("0.000");
-                if(playerBezierPath.CarArrived)
+            if (playerBezierPath != null)
+            {
+                playerTime.text += playerBezierPath.Timer.ToString("0.000");
+                if (playerBezierPath.CarArrived)
                 {
                     playerScore.text = "-    Your Score: " + ((((int)(1000 * playerBezierPath.Timer) / playerBezierPath.playersControlPoints.Count) + ((int)(1000 * playerBezierPath.Timer) / ((playerBezierPath.playersControlPoints.Count + 1) / 6))) / 2).ToString();
                     playerCarGo = false;
@@ -142,7 +142,7 @@ public class InGameGui : MonoBehaviour
         createSpline.gameObject.SetActive(false);
 
         playerBezierPath.gamePoints = playerControlPoints;
-        for(int i = 1; i < playerControlPoints.Count; i++)
+        for (int i = 1; i < playerControlPoints.Count; i++)
         {
             if (!playerControlPoints[i].activeSelf)
                 playerControlPoints[i].SetActive(true);
@@ -151,13 +151,13 @@ public class InGameGui : MonoBehaviour
 
     public void EndAndRun()
     {
-        if(playerBezierPath.SplineOutTrack)
+        if (playerBezierPath.SplineOutTrack)
         {
             StartCoroutine(ErrorPanel("Spline is out of track"));
         }
         else
         {
-            if(playerBezierPath.CheckLastControlPoint())
+            if (playerBezierPath.CheckLastControlPoint())
             {
                 playerBezierPath.carmove = true;
                 endAndRun.GetComponent<Button>().enabled = false;
@@ -203,7 +203,7 @@ public class InGameGui : MonoBehaviour
             createSpline.gameObject.SetActive(true);
 
         }
-        else if(!playerCarGo)
+        else if (!playerCarGo)
         {
             backButton.gameObject.SetActive(false);
             if (playerBezierPath.gameObject != null)
@@ -232,18 +232,18 @@ public class InGameGui : MonoBehaviour
             foreach (GameObject p in g)
                 p.gameObject.SetActive(false);
         }
-        
+
     }
 
     private void SetCorrectScore()
     {
         switch (SceneManager.GetActiveScene().name)
         {
-            case "Bahrain": ourTime.text = "Nostro Tempo: " + OurScores.BahrainScore; break;
-            case "Interlagos": ourTime.text = "Nostro Tempo: " + OurScores.IntelagosScore; break;
-            case "MonteCarlo": ourTime.text = "Nostro Tempo: " + OurScores.MonteCarloScore; break;
-            case "Monza": ourTime.text = "Nostro Tempo: " + OurScores.MonzaScore; break;
-            case "Singapore": ourTime.text = "Nostro Tempo: " + OurScores.SingaporeScore; break;
+            case "Bahrain": ourTime.text = "Our Time: " + OurScores.BahrainScore; break;
+            case "Interlagos": ourTime.text = "Our Time: " + OurScores.IntelagosScore; break;
+            case "MonteCarlo": ourTime.text = "Our Time: " + OurScores.MonteCarloScore; break;
+            case "Monza": ourTime.text = "Our Time: " + OurScores.MonzaScore; break;
+            case "Singapore": ourTime.text = "Our Time: " + OurScores.SingaporeScore; break;
             default: break;
         }
     }
