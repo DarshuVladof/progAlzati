@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class PlayerData : MonoBehaviour {
 
-	// Use this for initialization
 	void Start () {
 		if(!PlayerPrefs.HasKey("Bahrain"))
             PlayerPrefs.SetFloat("Bahrain", 0.00f);
@@ -17,12 +16,6 @@ public class PlayerData : MonoBehaviour {
         if (!PlayerPrefs.HasKey("Singapore"))
             PlayerPrefs.SetFloat("Singapore", 0.00f);
 
-        PlayerPrefs.SetFloat("Monza", 0.00f);
         PlayerPrefs.Save();
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }

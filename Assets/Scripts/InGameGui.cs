@@ -87,7 +87,13 @@ public class InGameGui : MonoBehaviour
                     playerCarGo = false;
                     endAndRun.GetComponent<Button>().enabled = true;
 
-                    if(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) == 0 || PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) > playerBezierPath.Timer)
+                    for(int i = 0; i < playerControlPoints.Count; i++)
+                    {
+                        playerControlPoints[i].SetActive(true);
+                    }
+                    generalPanel.GetComponent<Image>().raycastTarget = false;
+
+                    if (PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) == 0 || PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) > playerBezierPath.Timer)
                     {
                         PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, playerBezierPath.Timer);
                         PlayerPrefs.Save();
@@ -169,8 +175,10 @@ public class InGameGui : MonoBehaviour
             {
                 playerBezierPath.carmove = true;
                 endAndRun.GetComponent<Button>().enabled = false;
-                playerCarGo = true;
-                playerBezierPath.Timer = 0.0f;
+                playerControlPoints = playerBezierPath.gamePoints;
+                //playerCarGo = true;
+                //playerBezierPath.Timer = 0.0f;
+                StartCoroutine(DisablePlayerPointAndGo());
             }
             else
             {
@@ -297,11 +305,24 @@ public class InGameGui : MonoBehaviour
 
     IEnumerator ErrorPanel(string message)
     {
+        generalPanel.GetComponent<Image>().raycastTarget = true;
         errorPanel.SetActive(true);
         errorPanel.GetComponentInChildren<Text>().text = message;
-        GameObject.Find("GUI").GetComponent<GraphicRaycaster>().enabled = false;
         yield return new WaitForSeconds(2.0f);
         errorPanel.SetActive(false);
-        GameObject.Find("GUI").GetComponent<GraphicRaycaster>().enabled = true;
+        generalPanel.GetComponent<Image>().raycastTarget = false;
+    }
+
+    IEnumerator DisablePlayerPointAndGo()
+    {
+        for(int i = 0; i < playerControlPoints.Count; i++)
+        {
+            playerControlPoints[i].SetActive(false);
+        }
+
+        generalPanel.GetComponent<Image>().raycastTarget = true;
+        yield return new WaitForSeconds(0.5f);
+        playerCarGo = true;
+        playerBezierPath.Timer = 0.0f;
     }
 }
