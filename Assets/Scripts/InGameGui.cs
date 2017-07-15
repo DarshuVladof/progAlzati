@@ -18,11 +18,13 @@ public class InGameGui : MonoBehaviour
     private List<GameObject> playerControlPoints;
     private float ourTimer, playerTimer;
     private int ourPoints, ourCurves, playerPoints, PlayerCurves;
+    private GameObject[] turningPoints;
 
     void Start()
     {
+        turningPoints = turningPoints = GameObject.FindGameObjectsWithTag("Tp");
         SetCorrectScore();
-        SetPlayerHighScore();
+        //SetPlayerHighScore();
 
         playerControlPoints = new List<GameObject>();
         playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
@@ -84,6 +86,12 @@ public class InGameGui : MonoBehaviour
                     playerScore.text = "-    Your Score: " + ((((int)(1000 * playerBezierPath.Timer) / playerBezierPath.playersControlPoints.Count) + ((int)(1000 * playerBezierPath.Timer) / ((playerBezierPath.playersControlPoints.Count + 1) / 6))) / 2).ToString();
                     playerCarGo = false;
                     endAndRun.GetComponent<Button>().enabled = true;
+
+                    if(PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) == 0 || PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name) > playerBezierPath.Timer)
+                    {
+                        PlayerPrefs.SetFloat(SceneManager.GetActiveScene().name, playerBezierPath.Timer);
+                        PlayerPrefs.Save();
+                    }
                 }
             }
         }
@@ -117,7 +125,7 @@ public class InGameGui : MonoBehaviour
 
     public void GenerateSpline()
     {
-        GameObject[] turningPoints = GameObject.FindGameObjectsWithTag("Tp");
+        //GameObject[] turningPoints = GameObject.FindGameObjectsWithTag("Tp");
         for (int i = 0; i < turningPoints.Length; i++)
         {
             if (turningPoints[i].activeSelf)
@@ -228,9 +236,16 @@ public class InGameGui : MonoBehaviour
                 if (playerControlPoints[i].activeSelf)
                     playerControlPoints[i].SetActive(false);
             }
+
             GameObject[] g = GameObject.FindGameObjectsWithTag("SplinePoint");
             foreach (GameObject p in g)
                 p.gameObject.SetActive(false);
+
+            for (int i = 0; i < turningPoints.Length; i++)
+            {
+                if (!turningPoints[i].activeSelf)
+                    turningPoints[i].SetActive(true);
+            }
         }
 
     }
@@ -250,7 +265,7 @@ public class InGameGui : MonoBehaviour
 
     private void SetPlayerHighScore()
     {
-
+        playerTime.text += PlayerPrefs.GetFloat(SceneManager.GetActiveScene().name).ToString("0.000");
     }
 
     private void Pause()
@@ -259,11 +274,7 @@ public class InGameGui : MonoBehaviour
         pausePanel.SetActive(true);
         pause = true;
         Time.timeScale = 0;
-        backButton.enabled = false;
-        endAndRun.GetComponent<Button>().enabled = false;
-        drawButton.enabled = false;
-        runButton.enabled = false;
-        createSpline.enabled = false;
+        EnableOrDisable(false);
     }
 
     private void Resume()
@@ -272,11 +283,16 @@ public class InGameGui : MonoBehaviour
         pausePanel.SetActive(false);
         pause = false;
         Time.timeScale = 1;
-        backButton.enabled = true;
-        endAndRun.GetComponent<Button>().enabled = true;
-        drawButton.enabled = true;
-        runButton.enabled = true;
-        createSpline.enabled = true;
+        EnableOrDisable(true);
+    }
+
+    private void EnableOrDisable(bool b)
+    {
+        backButton.enabled = b;
+        endAndRun.GetComponent<Button>().enabled = b;
+        drawButton.enabled = b;
+        runButton.enabled = b;
+        createSpline.enabled = b;
     }
 
     IEnumerator ErrorPanel(string message)

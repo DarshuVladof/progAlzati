@@ -9,6 +9,7 @@ public class SelectionMenu : MonoBehaviour
     public GameObject[] circuitsList;
     public GameObject buttonLeft, buttonRight;
     public GameObject actualName;
+    public GameObject bestTime;
 
     private string[] circuitsName = { "Singapore", "Interlagos", "Bahrain", "Monza", "MonteCarlo" };
     private int currentIndex;
@@ -32,6 +33,8 @@ public class SelectionMenu : MonoBehaviour
 
         if(Input.GetKeyDown(KeyCode.Return))
             SceneManager.LoadScene(circuitsName[currentIndex]);
+
+        SetPlayerHighScore();
     }
 
     public void GoToCircuit()
@@ -82,5 +85,19 @@ public class SelectionMenu : MonoBehaviour
     public void BackToMainMenu()
     {
         SceneManager.LoadScene("MainMenu");
+    }
+
+    private void SetPlayerHighScore()
+    {
+        float best = PlayerPrefs.GetFloat(actualName.GetComponent<Text>().text);
+
+        if(best == 0)
+        {
+            bestTime.GetComponent<Text>().text = "Best Time: no time";
+        }
+        else
+        {
+            bestTime.GetComponent<Text>().text = "Best Time: " + best.ToString("0.000");
+        }
     }
 }
