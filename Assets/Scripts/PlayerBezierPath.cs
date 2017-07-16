@@ -34,7 +34,7 @@ public class PlayerBezierPath : MonoBehaviour
     private int count = 0;
     private float timer = 0.0f;
     private bool carArrived = false;
-    public float threshold= 0.5f;
+    public float threshold = 0.5f;
 
     // Use this for initialization
     void Start()
@@ -108,7 +108,8 @@ public class PlayerBezierPath : MonoBehaviour
                 {
                     if (controlPoint != null)
                     {
-                        
+                        if (GameObject.FindGameObjectWithTag("GUI").GetComponent<InGameGui>().cpHidden)
+                            GameObject.FindGameObjectWithTag("GUI").GetComponent<InGameGui>().HideControlPoints();
                         Vector2 worldPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                         GameObject g = ObjectPoolingManager.Instance.GetObject(controlPoint.name);
                         g.transform.position = worldPosition;
@@ -116,6 +117,7 @@ public class PlayerBezierPath : MonoBehaviour
                         g.GetComponentInChildren<TextMesh>().text = n.ToString();
                         gamePoints.Add(g);
                         updateCollider = true;
+
                     }
                 }
                 else
@@ -239,43 +241,22 @@ public class PlayerBezierPath : MonoBehaviour
         get { return carArrived; }
     }
 
-    private void AddCollider()
-    {
-        edgePoints = new List<Vector2>();
-        Vector2[] v = new Vector2[drawingPoints.Length];
-        v = drawingPoints.toVector2Array();
-
-        for (int j = 1; j < v.Length; j++)
-        {
-            Vector2 distanceBetweenPoints = v[j - 1] - v[j];
-            Vector3 crossProduct = Vector3.Cross(distanceBetweenPoints, Vector3.forward);
-
-            Vector2 up = (lineRenderer.startWidth / 2) * new Vector2(crossProduct.normalized.x, crossProduct.normalized.y) + v[j - 1];
-            Vector2 down = -(lineRenderer.startWidth / 2) * new Vector2(crossProduct.normalized.x, crossProduct.normalized.y) + v[j - 1];
-
-            edgePoints.Insert(0, down);
-            edgePoints.Add(up);
-
-            if (j == v.Length - 1)
-            {
-                // Compute the values for the last point on the Bezier curve
-                up = (lineRenderer.startWidth / 2) * new Vector2(crossProduct.normalized.x, crossProduct.normalized.y) + v[j];
-                down = -(lineRenderer.startWidth / 2) * new Vector2(crossProduct.normalized.x, crossProduct.normalized.y) + v[j];
-
-                edgePoints.Insert(0, down);
-                edgePoints.Add(up);
-            }
-        }
-
-        coll.points = edgePoints.ToArray();
-    }
-
     IEnumerator ResetCarPosition()
     {
         count = 0;
         yield return new WaitForSeconds(0.5f);
         car.transform.position = GameObject.FindGameObjectWithTag("Start").transform.position;
         carArrived = false;
+    }
+
+    public void clear()
+    {
+        gamePoints.Clear();
+        drawingPoints = new Vector3[0];
+        n = 1;
+        gamePoints.Add(GameObject.FindGameObjectWithTag("Start"));
+        lineRenderer.SetPositions(drawingPoints);
+        Render();
     }
 }
 

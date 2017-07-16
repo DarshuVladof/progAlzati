@@ -8,7 +8,7 @@ public class InGameGui : MonoBehaviour
 {
     public Button drawButton, runButton, createSpline, backButton;
     public Text ourTime, playerTime, ourScore, playerScore;
-    public GameObject pausePanel, generalPanel, errorPanel, endAndRun;
+    public GameObject pausePanel, generalPanel, errorPanel, endAndRun, hideAndShow, clear;
 
     private MyBezierPath bezierPath;
     private PlayerBezierPath playerBezierPath;
@@ -19,11 +19,18 @@ public class InGameGui : MonoBehaviour
     private float ourTimer, playerTimer;
     private int ourPoints, ourCurves, playerPoints, PlayerCurves;
     private GameObject[] turningPoints;
+    public bool cpHidden = false;
+
+    private string t1 = "Hide control points";
+    private string t2 = "Show control points";
 
     void Start()
     {
+        clear.SetActive(false);
         turningPoints = turningPoints = GameObject.FindGameObjectsWithTag("Tp");
         SetCorrectScore();
+        hideAndShow.SetActive(false);
+        hideAndShow.GetComponentInChildren<Text>().text = t1;
         //SetPlayerHighScore();
 
         playerControlPoints = new List<GameObject>();
@@ -87,7 +94,7 @@ public class InGameGui : MonoBehaviour
                     playerCarGo = false;
                     endAndRun.GetComponent<Button>().enabled = true;
 
-                    for(int i = 0; i < playerControlPoints.Count; i++)
+                    for (int i = 0; i < playerControlPoints.Count; i++)
                     {
                         playerControlPoints[i].SetActive(true);
                     }
@@ -131,6 +138,7 @@ public class InGameGui : MonoBehaviour
 
     public void GenerateSpline()
     {
+        clear.SetActive(true);
         //GameObject[] turningPoints = GameObject.FindGameObjectsWithTag("Tp");
         for (int i = 0; i < turningPoints.Length; i++)
         {
@@ -154,6 +162,7 @@ public class InGameGui : MonoBehaviour
         backButton.gameObject.SetActive(true);
         endAndRun.gameObject.SetActive(true);
         createSpline.gameObject.SetActive(false);
+        hideAndShow.SetActive(true);
 
         playerBezierPath.gamePoints = playerControlPoints;
         for (int i = 1; i < playerControlPoints.Count; i++)
@@ -237,6 +246,7 @@ public class InGameGui : MonoBehaviour
 
             createSpline.gameObject.SetActive(true);
             endAndRun.gameObject.SetActive(false);
+            hideAndShow.SetActive(false);
 
             playerControlPoints = playerBezierPath.gamePoints;
             for (int i = 1; i < playerControlPoints.Count; i++)
@@ -254,6 +264,7 @@ public class InGameGui : MonoBehaviour
                 if (!turningPoints[i].activeSelf)
                     turningPoints[i].SetActive(true);
             }
+            clear.SetActive(false);
         }
 
     }
@@ -303,6 +314,33 @@ public class InGameGui : MonoBehaviour
         createSpline.enabled = b;
     }
 
+    public void HideControlPoints()
+    {
+        GameObject[] controlPoints = GameObject.FindGameObjectsWithTag("CP");
+        for (int i = 0; i < controlPoints.Length; i++)
+        {
+            controlPoints[i].GetComponent<SpriteRenderer>().enabled = !controlPoints[i].GetComponent<SpriteRenderer>().enabled;
+            controlPoints[i].GetComponentInChildren<MeshRenderer>().enabled = !controlPoints[i].GetComponentInChildren<MeshRenderer>().enabled;
+        }
+
+        t1 = t2;
+        t2 = hideAndShow.GetComponentInChildren<Text>().text;
+        hideAndShow.GetComponentInChildren<Text>().text = t1;
+        cpHidden = !cpHidden;
+    }
+
+    public void ClearAction()
+    {
+        if (cpHidden)
+            HideControlPoints();
+        GameObject[] controlPoints = GameObject.FindGameObjectsWithTag("CP");
+        foreach (GameObject g in controlPoints)
+            g.SetActive(false);
+        playerControlPoints.Clear();
+        playerBezierPath.clear();
+        playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
+    }
+
     IEnumerator ErrorPanel(string message)
     {
         generalPanel.GetComponent<Image>().raycastTarget = true;
@@ -315,7 +353,7 @@ public class InGameGui : MonoBehaviour
 
     IEnumerator DisablePlayerPointAndGo()
     {
-        for(int i = 0; i < playerControlPoints.Count; i++)
+        for (int i = 0; i < playerControlPoints.Count; i++)
         {
             playerControlPoints[i].SetActive(false);
         }
