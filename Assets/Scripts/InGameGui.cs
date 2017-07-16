@@ -18,7 +18,7 @@ public class InGameGui : MonoBehaviour
     private List<GameObject> playerControlPoints;
     private float ourTimer, playerTimer;
     private int ourPoints, ourCurves, playerPoints, PlayerCurves;
-    private GameObject[] turningPoints;
+    private GameObject[] turningPoints,savedSlinePoints;
     public bool cpHidden = false;
 
     private string t1 = "Hide control points";
@@ -32,6 +32,8 @@ public class InGameGui : MonoBehaviour
         hideAndShow.SetActive(false);
         hideAndShow.GetComponentInChildren<Text>().text = t1;
         //SetPlayerHighScore();
+        savedSlinePoints = new GameObject[0];
+
 
         playerControlPoints = new List<GameObject>();
         playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
@@ -139,7 +141,10 @@ public class InGameGui : MonoBehaviour
     public void GenerateSpline()
     {
         clear.SetActive(true);
+        foreach (GameObject p in savedSlinePoints)
+            p.gameObject.SetActive(true);
         //GameObject[] turningPoints = GameObject.FindGameObjectsWithTag("Tp");
+
         for (int i = 0; i < turningPoints.Length; i++)
         {
             if (turningPoints[i].activeSelf)
@@ -226,7 +231,7 @@ public class InGameGui : MonoBehaviour
             bezierPath.car.SetActive(false);
             ourSplineGenerated = false;
             createSpline.gameObject.SetActive(true);
-
+            
         }
         else if (!playerCarGo)
         {
@@ -248,15 +253,20 @@ public class InGameGui : MonoBehaviour
             endAndRun.gameObject.SetActive(false);
             hideAndShow.SetActive(false);
 
-            playerControlPoints = playerBezierPath.gamePoints;
-            for (int i = 1; i < playerControlPoints.Count; i++)
-            {
-                if (playerControlPoints[i].activeSelf)
-                    playerControlPoints[i].SetActive(false);
-            }
+            /* playerControlPoints = playerBezierPath.gamePoints;
+             for (int i = 1; i < playerControlPoints.Count; i++)
+             {
+                 if (playerControlPoints[i].activeSelf)
+                     playerControlPoints[i].SetActive(false);
+             }
 
-            GameObject[] g = GameObject.FindGameObjectsWithTag("SplinePoint");
-            foreach (GameObject p in g)
+             GameObject[] g = GameObject.FindGameObjectsWithTag("SplinePoint");
+             foreach (GameObject p in g)
+                 p.gameObject.SetActive(false);*/
+            if(!cpHidden)
+                HideControlPoints();
+            savedSlinePoints = GameObject.FindGameObjectsWithTag("SplinePoint");
+            foreach (GameObject p in savedSlinePoints)
                 p.gameObject.SetActive(false);
 
             for (int i = 0; i < turningPoints.Length; i++)
@@ -339,6 +349,8 @@ public class InGameGui : MonoBehaviour
         playerControlPoints.Clear();
         playerBezierPath.clear();
         playerControlPoints.Add(GameObject.FindGameObjectWithTag("Start"));
+        savedSlinePoints = new GameObject[0];
+           
     }
 
     IEnumerator ErrorPanel(string message)
