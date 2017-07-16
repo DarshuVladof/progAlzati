@@ -77,7 +77,7 @@ public class InGameGui : MonoBehaviour
                     ourScore.text = "Our score: " + ((((int)((100000-(1000 * ourTimer)) / bezierPath.dots)) )).ToString();
                     createSpline.gameObject.SetActive(true);
                     runButton.enabled = true;
-                    backButton.enabled = true;
+                    backButton.enabled = true;               
                     StartCoroutine(ResetOurSpline());             
                 }
             }
@@ -108,6 +108,8 @@ public class InGameGui : MonoBehaviour
                         PlayerPrefs.Save();
                     }
                     backButton.enabled = true;
+                    clear.GetComponent<Button>().enabled = true;
+                    hideAndShow.GetComponent<Button>().enabled = true;
                 }
             }
         }
@@ -154,8 +156,8 @@ public class InGameGui : MonoBehaviour
 
         if (playerBezierPath.gameObject != null)
             playerBezierPath.gameObject.SetActive(true);
-        //if (bezierPath.gameObject != null)
-        //    bezierPath.gameObject.SetActive(false);
+        if (bezierPath.gameObject != null)
+            bezierPath.gameObject.SetActive(false);
 
         playerBezierPath.car.SetActive(true);
         bezierPath.car.SetActive(false);
@@ -224,6 +226,7 @@ public class InGameGui : MonoBehaviour
     {
         if (ourSplineGenerated == true && !ourCarGo)
         {
+            
             backButton.gameObject.SetActive(false);
             if (bezierPath.gameObject != null)
                 bezierPath.gameObject.SetActive(false);
@@ -239,11 +242,9 @@ public class InGameGui : MonoBehaviour
             backButton.gameObject.SetActive(false);
             if (playerBezierPath.gameObject != null)
                 playerBezierPath.gameObject.SetActive(false);
-            if (bezierPath.gameObject != null)
-                bezierPath.gameObject.SetActive(true);
-
+            
             playerBezierPath.car.SetActive(false);
-            bezierPath.car.SetActive(true);
+           
 
             if (ourSplineGenerated)
                 runButton.gameObject.SetActive(true);
@@ -356,11 +357,14 @@ public class InGameGui : MonoBehaviour
 
     IEnumerator DisablePlayerPointAndGo()
     {
-        bezierPath.car.SetActive(true);
         bezierPath.gameObject.SetActive(true);
+        bezierPath.car.SetActive(true);
         bezierPath.GenerateSpline();
         ourPoints = bezierPath.dots;
         backButton.enabled = false;
+        ourSplineGenerated = true;
+        clear.GetComponent<Button>().enabled = false;
+        hideAndShow.GetComponent<Button>().enabled = false;
 
         for (int i = 0; i < playerControlPoints.Count; i++)
         {
@@ -378,6 +382,8 @@ public class InGameGui : MonoBehaviour
 
     IEnumerator ResetOurSpline()
     {
+        ourCarGo = false;
+        ourSplineGenerated = false;
         yield return new WaitForSeconds(0.6f);
         bezierPath.gameObject.SetActive(false);
     }

@@ -211,8 +211,6 @@ public class MyBezierPath : MonoBehaviour
 
         drawingPoints = calculateBezier.GetDrawingPoints3or5Degree();
         SetLinePoints(drawingPoints);
-
-
     }
 
     private void SetLinePoints(List<Vector3> drawingPoints)
@@ -229,15 +227,6 @@ public class MyBezierPath : MonoBehaviour
     public bool CarArrived
     {
         get { return carArrived; }
-    }
-
-    public void OnGUI()
-    {
-        //GUILayout.BeginArea(new Rect(10, 10, 300, 300));
-        //GUILayout.Label("F1 Line Segments (Click to add points)");
-        //GUILayout.Label("F2 Bezier curve (Click to add points)");
-        //GUILayout.Label("X  Clear");
-        //GUILayout.EndArea();
     }
 
     IEnumerator CarGo()
