@@ -20,27 +20,40 @@ public class CameraMovement : MonoBehaviour {
 	void Update () {
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
+        
         if (scroll != 0.0f)
         {
             targetOrtho -= scroll * zoomSpeed;
             targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
         }
 
+        if(Input.GetKey(KeyCode.KeypadPlus))
+        {
+            targetOrtho -= 2.0f;
+            targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
+        }
+
+        if (Input.GetKey(KeyCode.KeypadMinus))
+        {
+            targetOrtho += 2.0f;
+            targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
+        }
+
         Camera.main.orthographicSize = Mathf.MoveTowards(Camera.main.orthographicSize, targetOrtho, smoothSpeed * Time.deltaTime);
 
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow) || Input.GetKey(KeyCode.D))
         {
             transform.Translate(new Vector3(movementSpeed * Time.deltaTime, 0, 0));
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.A))
         {
             transform.Translate(new Vector3(-movementSpeed * Time.deltaTime, 0, 0));
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S))
         {
             transform.Translate(new Vector3(0, -movementSpeed * Time.deltaTime, 0));
         }
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W))
         {
             transform.Translate(new Vector3(0, movementSpeed * Time.deltaTime, 0));
         }
