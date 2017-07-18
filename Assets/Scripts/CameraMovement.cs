@@ -9,6 +9,7 @@ public class CameraMovement : MonoBehaviour {
     public float smoothSpeed = 10.0f;
     public float minOrtho = 5.0f;
     public float movementSpeed = 10.0f;
+    public float zoomWithKeyboardSpeed = 2.0f;
 
     private float maxOrtho;
 
@@ -29,13 +30,13 @@ public class CameraMovement : MonoBehaviour {
 
         if(Input.GetKey(KeyCode.KeypadPlus))
         {
-            targetOrtho -= 2.0f;
+            targetOrtho -= zoomWithKeyboardSpeed;
             targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
         }
 
         if (Input.GetKey(KeyCode.KeypadMinus))
         {
-            targetOrtho += 2.0f;
+            targetOrtho += zoomWithKeyboardSpeed;
             targetOrtho = Mathf.Clamp(targetOrtho, minOrtho, maxOrtho);
         }
 
